@@ -1,7 +1,9 @@
 interface INavigationStacks {
   registration: string;
+  home: string;
 }
 
 export const navigationStacks: INavigationStacks = {
-  registration: 'registrationScreen',
+  registration: 'RegistrationScreen',
+  home: 'HomeScreen',
 };

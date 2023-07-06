@@ -4,6 +4,8 @@ export type Colors = {
   cornsilk: string;
   DarkBlue: string;
   red: string;
+  grey: string;
+  darkslateblue: string;
 };
 
 export const COLORS: Colors = {
@@ -12,4 +14,6 @@ export const COLORS: Colors = {
   cornsilk: '#fff8dc',
   DarkBlue: '#00008B',
   red: 'red',
+  grey: 'grey',
+  darkslateblue: '#000033',
 };

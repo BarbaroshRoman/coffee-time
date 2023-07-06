@@ -1,10 +1,22 @@
-import {Animated, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
-import {COLORS} from '../../../resources/colors';
-import {Registration} from './Registration';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const REGISTRATION = 'Registration';
-const AUTHORIZATION = 'Authorization';
+import {COLORS} from '../../../resources/colors';
+import {LoginMethod} from './LoginMethod';
+import {
+  AUTHORIZATION,
+  REGISTRATION,
+  USER_NAME,
+} from '../../core/RegistrationScreen';
 
 type Props = {
   fadeAnim: any;
@@ -16,9 +28,15 @@ type Props = {
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   passwordConfirmation: string;
   setPasswordConfirmation: React.Dispatch<React.SetStateAction<string>>;
-  errorHandler: () => void;
   errorMessage: string;
   backMainMenu: () => void;
+  registrationUser: () => void;
+  authorizationUser: () => void;
+  goToPickImage: () => void;
+  image: string;
+  username: string;
+  setUsername: React.Dispatch<React.SetStateAction<string>>;
+  additionalRegistration: () => void;
 };
 export const RegistrationContainer: React.FC<Props> = props => {
   const {
@@ -29,42 +47,77 @@ export const RegistrationContainer: React.FC<Props> = props => {
     setEmail,
     password,
     setPassword,
-    errorHandler,
     errorMessage,
     backMainMenu,
     passwordConfirmation,
     setPasswordConfirmation,
+    registrationUser,
+    authorizationUser,
+    goToPickImage,
+    image,
+    username,
+    setUsername,
+    additionalRegistration,
   } = props;
 
   switch (choiceToEnter) {
     case AUTHORIZATION:
       return (
-        <Registration
+        <LoginMethod
           email={email}
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
           confirmation={'Авторизоваться'}
-          errorHandler={errorHandler}
           errorMessage={errorMessage}
           backMainMenu={backMainMenu}
+          authorizationUser={authorizationUser}
         />
       );
     case REGISTRATION:
       return (
-        <Registration
+        <LoginMethod
           isRegistration={true}
           email={email}
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
           confirmation={'Зарегистрироваться'}
-          errorHandler={errorHandler}
           errorMessage={errorMessage}
           backMainMenu={backMainMenu}
           passwordConfirmation={passwordConfirmation}
           setPasswordConfirmation={setPasswordConfirmation}
+          additionalRegistration={additionalRegistration}
         />
+      );
+    case USER_NAME:
+      return (
+        <>
+          <View style={styles.imageContainer}>
+            {image ? (
+              <TouchableOpacity onPress={goToPickImage}>
+                <Image source={{uri: image}} style={styles.image} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={goToPickImage}>
+                <View style={styles.image}>
+                  <Text style={styles.selectImageText}>Выбрать фото</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.usernameInputContainer}>
+            <TextInput
+              style={styles.usernameInput}
+              onChangeText={setUsername}
+              value={username}
+              placeholder="Ваше имя"
+              placeholderTextColor={COLORS.white}
+            />
+            <FontAwesome5 name={'user'} color={COLORS.white} />
+            {/*<AntDesign name={'message1'} size={20} />*/}
+          </View>
+        </>
       );
     default:
       return (
@@ -101,5 +154,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.white,
     textAlign: 'center',
+  },
+  imageContainer: {
+    alignSelf: 'center',
+    marginTop: '8%',
+    height: 120,
+    width: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: COLORS.white,
+  },
+  image: {
+    alignSelf: 'center',
+    marginTop: '3%',
+    height: 110,
+    width: 110,
+    borderRadius: 60,
+    borderWidth: 1,
+    borderColor: COLORS.white,
+    backgroundColor: COLORS.grey,
+  },
+  selectImageText: {
+    marginTop: '28%',
+    color: COLORS.white,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  usernameInputContainer: {
+    flexDirection: 'row',
+    marginTop: '2%',
+    borderBottomWidth: 1,
+    borderColor: COLORS.white,
+    marginHorizontal: '14%',
+    fontSize: 24,
+    paddingLeft: 20,
+  },
+  usernameInput: {
+    fontSize: 20,
   },
 });

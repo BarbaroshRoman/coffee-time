@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import {COLORS} from '../../../resources/colors';
 
 type Props = {
@@ -17,23 +18,25 @@ type Props = {
   passwordConfirmation?: string;
   setPasswordConfirmation?: React.Dispatch<React.SetStateAction<string>>;
   confirmation: string;
-  errorHandler: () => void;
   errorMessage: string;
   backMainMenu: () => void;
+  authorizationUser?: () => void;
+  additionalRegistration?: () => void;
 };
-export const Registration: React.FC<Props> = props => {
+export const LoginMethod: React.FC<Props> = props => {
   const {
     email,
     setEmail,
     password,
     setPassword,
     confirmation,
-    errorHandler,
     errorMessage,
     backMainMenu,
     isRegistration,
     passwordConfirmation,
     setPasswordConfirmation,
+    authorizationUser,
+    additionalRegistration,
   } = props;
 
   return (
@@ -62,7 +65,9 @@ export const Registration: React.FC<Props> = props => {
       <Text style={styles.errorHandlerText}>{errorMessage}</Text>
       <TouchableOpacity
         style={styles.confirmationButton}
-        onPress={() => errorHandler()}>
+        onPress={() => {
+          authorizationUser ? authorizationUser() : additionalRegistration();
+        }}>
         <Text style={styles.registrationButtonText}>{confirmation}</Text>
       </TouchableOpacity>
       <TouchableOpacity

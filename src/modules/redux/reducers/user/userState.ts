@@ -1,4 +1,5 @@
-export interface IuserState {
+export interface IUserState {
+  sessionId: string;
   email: string;
   password: string;
   isLogined: boolean;
@@ -6,7 +7,8 @@ export interface IuserState {
   error: null | string;
 }
 
-export const userState: IuserState = {
+export const userState: IUserState = {
+  sessionId: '',
   email: '',
   password: '',
   isLogined: false,

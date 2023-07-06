@@ -5,6 +5,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 import {RootStackContainer} from './src/navigation/RootStackContainer';
 import {store} from './src/core/store/store';
+import {COLORS} from './resources/colors';
 
 const App = () => {
   useEffect(() => {
@@ -14,9 +15,9 @@ const App = () => {
   return (
     <Provider store={store}>
       <StatusBar
-        backgroundColor={'antiquewhite'}
+        backgroundColor={COLORS.darkslateblue}
         animated={true}
-        barStyle={'dark-content'}
+        barStyle={'light-content'}
       />
       <RootStackContainer />
     </Provider>
