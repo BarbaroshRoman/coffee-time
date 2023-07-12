@@ -6,7 +6,7 @@ type Props = {
   fadeAnim: any;
 };
 
-export const RegistrationTitle: React.FC<Props> = ({fadeAnim}) => {
+export const RegistrationTitle = ({fadeAnim}: Props) => {
   return (
     <View style={styles.titleContainer}>
       <Animated.View style={{opacity: fadeAnim}}>

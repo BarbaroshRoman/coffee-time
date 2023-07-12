@@ -12,6 +12,8 @@ export const userReducer = (
         sessionId: '',
         email: '',
         password: '',
+        avatar: '',
+        userName: '',
         isLogined: false,
         loading: true,
         error: null,
@@ -22,7 +24,9 @@ export const userReducer = (
         sessionId: action.payload.sessionId,
         email: action.payload.email,
         password: action.payload.password,
-        isLogined: true,
+        avatar: action.payload.avatar,
+        userName: action.payload.userName,
+        isLogined: action.payload.isLogined,
         loading: false,
         error: null,
       };
@@ -32,6 +36,8 @@ export const userReducer = (
         sessionId: '',
         email: '',
         password: '',
+        userName: '',
+        avatar: '',
         isLogined: false,
         loading: false,
         error: action.payload,
@@ -45,6 +51,9 @@ interface IRegistrationUserSuccessAction {
   sessionId: string | null;
   email: string;
   password: string;
+  avatar?: string;
+  userName?: string;
+  isLogined: boolean;
 }
 
 export const registrationUserPending = () => ({

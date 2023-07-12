@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   Animated,
   Dimensions,
   ImageBackground,
@@ -10,10 +11,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import {COLORS} from '../../resources/colors';
 import {RegistrationTitle} from '../common/components/RegistrationTitle';
-import {RegistrationContainer} from '../common/components/RegistrationContainer';
+import {RegistrationContainer} from '../common/components/registrationContainer/RegistrationContainer';
 import {
   registrationUserError,
   registrationUserPending,
@@ -21,12 +23,12 @@ import {
 } from '../modules/redux/reducers/user/userReducer';
 import {UserClientRequest, UserRequest} from './api/CoffeeRequest';
 import {navigationStacks} from '../navigation/stacks/navigationStacks';
-import ImagePicker from 'react-native-image-crop-picker';
+import {useTypedSelector} from '../hooks/useTypedSelector';
 
 export const MAIN_MENU = 'main menu';
 export const REGISTRATION = 'Registration';
 export const AUTHORIZATION = 'Authorization';
-export const USER_NAME = 'User name';
+export const USERNAME = 'Username';
 
 export const RegistrationScreen: React.FC = () => {
   const imageBackground = require('../../resources/images/registrationScreenImage.png');
@@ -34,21 +36,40 @@ export const RegistrationScreen: React.FC = () => {
   const isFocus = useIsFocused();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const isLogined = useTypedSelector(state => state.user.isLogined);
+  const error = useTypedSelector(state => state.user.error);
+  const loading = useTypedSelector(state => state.user.loading);
 
   const [choiceToEnter, setChoiceToEnter] = useState('main menu');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [image, setImage] = useState('');
+  const [avatar, setAvatar] = useState('');
   const [username, setUsername] = useState('');
   const init = async () => {
-    await SystemNavigationBar.setNavigationColor(COLORS.white, 'dark', 'both');
+    await SystemNavigationBar.setNavigationColor(
+      COLORS.lightGray,
+      'dark',
+      'both',
+    );
   };
+
+  useEffect(() => {
+    if (isLogined) {
+      navigation.navigate(navigationStacks.home as never);
+    }
+  }, [isLogined, navigation]);
 
   useEffect(() => {
     isFocus && init();
   }, [isFocus]);
+
+  useEffect(() => {
+    if (error) {
+      showError(error);
+    }
+  }, [error]);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -118,36 +139,47 @@ export const RegistrationScreen: React.FC = () => {
 
   const additionalRegistration = (): void => {
     const isErrorsHandled = registrationErrorHandler() ?? false;
-    if (isErrorsHandled) {
-      setChoiceToEnter(USER_NAME);
-    }
+    isErrorsHandled && setChoiceToEnter(USERNAME);
   };
 
-  const registrationUser = async () => {
-    const userRequest = new UserClientRequest();
-    const item = {
-      email: email,
-      password: password,
-    };
+  const registrationUser = useCallback(async () => {
+    if (!username) {
+      setErrorMessage('Поле не должно быть пустым');
+    } else {
+      const userRequest = new UserClientRequest();
+      const item = {
+        email: email,
+        password: password,
+      };
 
-    try {
-      dispatch(registrationUserPending());
-      const sessionId = await userRequest.register(new UserRequest(item));
-      dispatch(
-        registrationUserSuccess({
-          sessionId: sessionId,
-          email: email,
-          password: password,
-        }),
-      );
-      navigation.navigate(navigationStacks.home as never);
-      backMainMenu();
-    } catch {
-      dispatch(registrationUserError('Ошибка регистрации'));
+      try {
+        dispatch(registrationUserPending());
+        const sessionId = await userRequest.register(new UserRequest(item));
+        setTimeout(() => {
+          dispatch(
+            registrationUserSuccess({
+              sessionId: sessionId,
+              email: email,
+              password: password,
+              avatar: avatar,
+              userName: username,
+              isLogined: true,
+            }),
+          );
+          navigation.navigate(navigationStacks.home as never);
+          backMainMenu();
+        }, 2000);
+      } catch {
+        setTimeout(() => {
+          dispatch(registrationUserError('Ошибка регистрации'));
+        }, 2000);
+      } finally {
+        setUsername('');
+      }
     }
-  };
+  }, [avatar, dispatch, email, navigation, password, username]);
 
-  const authorizationUser = async () => {
+  const authorizationUser = useCallback(async () => {
     const isErrorsHandled = authorizationErrorHandler() ?? false;
     if (isErrorsHandled) {
       const userRequest = new UserClientRequest();
@@ -161,20 +193,46 @@ export const RegistrationScreen: React.FC = () => {
         const sessionId = await userRequest.authorization(
           new UserRequest(item),
         );
-        dispatch(
-          registrationUserSuccess({
-            sessionId: sessionId,
-            email: email,
-            password: password,
-          }),
-        );
-        navigation.navigate(navigationStacks.home as never);
-        backMainMenu();
+        setTimeout(() => {
+          dispatch(
+            registrationUserSuccess({
+              sessionId: sessionId,
+              email: email,
+              password: password,
+              isLogined: true,
+            }),
+          );
+          navigation.navigate(navigationStacks.home as never);
+          backMainMenu();
+        }, 5000);
       } catch {
-        dispatch(registrationUserError('Ошибка авторизации'));
+        setTimeout(() => {
+          dispatch(registrationUserError('Неверно введен email и/или пароль'));
+        }, 2000);
       }
     }
-  };
+  }, [dispatch, email, navigation, password]);
+
+  const showError = useCallback(
+    (errorMes: any) => {
+      Alert.alert('Ошибка', errorMes, [
+        {
+          text: 'Ok',
+          onPress: () => {
+            dispatch(
+              registrationUserSuccess({
+                sessionId: '',
+                email: '',
+                password: '',
+                isLogined: false,
+              }),
+            );
+          },
+        },
+      ]);
+    },
+    [dispatch],
+  );
 
   const goToPickImage = () => {
     ImagePicker.openPicker({
@@ -182,7 +240,7 @@ export const RegistrationScreen: React.FC = () => {
       height: 400,
       cropping: true,
     }).then(picture => {
-      setImage(picture.path);
+      setAvatar(picture.path);
     });
   };
 
@@ -191,7 +249,7 @@ export const RegistrationScreen: React.FC = () => {
       <ImageBackground source={imageBackground} style={styles.imageBackground}>
         <View style={styles.gradientContainer}>
           <LinearGradient
-            colors={['transparent', 'rgba(255,255,255,0.6)']}
+            colors={['transparent', 'rgba(205,205,205,0.6)']}
             style={styles.gradient}
           />
         </View>
@@ -211,10 +269,11 @@ export const RegistrationScreen: React.FC = () => {
           registrationUser={registrationUser}
           authorizationUser={authorizationUser}
           goToPickImage={goToPickImage}
-          image={image}
+          avatar={avatar}
           username={username}
           setUsername={setUsername}
           additionalRegistration={additionalRegistration}
+          loading={loading}
         />
       </ImageBackground>
     </View>

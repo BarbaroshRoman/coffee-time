@@ -1,22 +1,14 @@
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import React from 'react';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {Animated, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import {COLORS} from '../../../resources/colors';
-import {LoginMethod} from './LoginMethod';
+import {COLORS} from '../../../../resources/colors';
+import {LoginMethod} from './child/LoginMethod';
 import {
   AUTHORIZATION,
   REGISTRATION,
-  USER_NAME,
-} from '../../core/RegistrationScreen';
+  USERNAME,
+} from '../../../core/RegistrationScreen';
+import {UserData} from './child/UserData';
 
 type Props = {
   fadeAnim: any;
@@ -33,12 +25,13 @@ type Props = {
   registrationUser: () => void;
   authorizationUser: () => void;
   goToPickImage: () => void;
-  image: string;
+  avatar: string;
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
   additionalRegistration: () => void;
+  loading: boolean;
 };
-export const RegistrationContainer: React.FC<Props> = props => {
+export const RegistrationContainer = (props: Props) => {
   const {
     fadeAnim,
     choiceToEnter,
@@ -54,10 +47,11 @@ export const RegistrationContainer: React.FC<Props> = props => {
     registrationUser,
     authorizationUser,
     goToPickImage,
-    image,
+    avatar,
     username,
     setUsername,
     additionalRegistration,
+    loading,
   } = props;
 
   switch (choiceToEnter) {
@@ -72,6 +66,7 @@ export const RegistrationContainer: React.FC<Props> = props => {
           errorMessage={errorMessage}
           backMainMenu={backMainMenu}
           authorizationUser={authorizationUser}
+          loading={loading}
         />
       );
     case REGISTRATION:
@@ -90,34 +85,17 @@ export const RegistrationContainer: React.FC<Props> = props => {
           additionalRegistration={additionalRegistration}
         />
       );
-    case USER_NAME:
+    case USERNAME:
       return (
-        <>
-          <View style={styles.imageContainer}>
-            {image ? (
-              <TouchableOpacity onPress={goToPickImage}>
-                <Image source={{uri: image}} style={styles.image} />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={goToPickImage}>
-                <View style={styles.image}>
-                  <Text style={styles.selectImageText}>Выбрать фото</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.usernameInputContainer}>
-            <TextInput
-              style={styles.usernameInput}
-              onChangeText={setUsername}
-              value={username}
-              placeholder="Ваше имя"
-              placeholderTextColor={COLORS.white}
-            />
-            <FontAwesome5 name={'user'} color={COLORS.white} />
-            {/*<AntDesign name={'message1'} size={20} />*/}
-          </View>
-        </>
+        <UserData
+          registrationUser={registrationUser}
+          goToPickImage={goToPickImage}
+          avatar={avatar}
+          username={username}
+          setUsername={setUsername}
+          errorMessage={errorMessage}
+          loading={loading}
+        />
       );
     default:
       return (
@@ -144,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: '16%',
   },
   registrationButton: {
-    backgroundColor: COLORS.DarkBlue,
+    backgroundColor: COLORS.darkBlue,
     paddingVertical: 14,
     marginHorizontal: '10%',
     marginTop: 44,
@@ -154,42 +132,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.white,
     textAlign: 'center',
-  },
-  imageContainer: {
-    alignSelf: 'center',
-    marginTop: '8%',
-    height: 120,
-    width: 120,
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: COLORS.white,
-  },
-  image: {
-    alignSelf: 'center',
-    marginTop: '3%',
-    height: 110,
-    width: 110,
-    borderRadius: 60,
-    borderWidth: 1,
-    borderColor: COLORS.white,
-    backgroundColor: COLORS.grey,
-  },
-  selectImageText: {
-    marginTop: '28%',
-    color: COLORS.white,
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  usernameInputContainer: {
-    flexDirection: 'row',
-    marginTop: '2%',
-    borderBottomWidth: 1,
-    borderColor: COLORS.white,
-    marginHorizontal: '14%',
-    fontSize: 24,
-    paddingLeft: 20,
-  },
-  usernameInput: {
-    fontSize: 20,
   },
 });
