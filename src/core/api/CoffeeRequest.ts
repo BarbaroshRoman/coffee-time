@@ -295,7 +295,7 @@ export class CafeRequest implements ICafeRequest {
 
 export interface ICafeRequest {
   sessionId: string;
-  cafeId: string;
+  cafeId: string | undefined;
 }
 
 export class ProductBriefInfo implements IProductBriefInfo {

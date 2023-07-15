@@ -21,8 +21,8 @@ import {
   registrationUserPending,
   registrationUserSuccess,
 } from '../modules/redux/reducers/user/userReducer';
-import {UserClientRequest, UserRequest} from './api/CoffeeRequest';
-import {navigationStacks} from '../navigation/stacks/navigationStacks';
+import { IUserRequest, UserClientRequest, UserRequest } from "./api/CoffeeRequest";
+import {navigationStacks} from '../navigation/components/navigationStacks';
 import {useTypedSelector} from '../hooks/useTypedSelector';
 
 export const MAIN_MENU = 'main menu';
@@ -36,7 +36,6 @@ export const RegistrationScreen: React.FC = () => {
   const isFocus = useIsFocused();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const isLogined = useTypedSelector(state => state.user.isLogined);
   const error = useTypedSelector(state => state.user.error);
   const loading = useTypedSelector(state => state.user.loading);
 
@@ -54,12 +53,6 @@ export const RegistrationScreen: React.FC = () => {
       'both',
     );
   };
-
-  useEffect(() => {
-    if (isLogined) {
-      navigation.navigate(navigationStacks.home as never);
-    }
-  }, [isLogined, navigation]);
 
   useEffect(() => {
     isFocus && init();
@@ -183,7 +176,7 @@ export const RegistrationScreen: React.FC = () => {
     const isErrorsHandled = authorizationErrorHandler() ?? false;
     if (isErrorsHandled) {
       const userRequest = new UserClientRequest();
-      const item = {
+      const item: IUserRequest = {
         email: email,
         password: password,
       };

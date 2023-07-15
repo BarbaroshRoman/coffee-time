@@ -29,11 +29,9 @@ export const CafeListView = (props: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
     backgroundColor: COLORS.white,
     marginBottom: 4,
-    height: 126,
     elevation: 2,
   },
   image: {
@@ -41,7 +39,6 @@ const styles = StyleSheet.create({
     width: 126,
   },
   cafeTableOfContents: {
-    flexDirection: 'column',
     flex: 1,
   },
   cafeName: {

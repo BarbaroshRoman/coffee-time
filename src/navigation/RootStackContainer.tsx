@@ -1,16 +1,23 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import {navigationStacks} from './stacks/navigationStacks';
+
+import {navigationStacks} from './components/navigationStacks';
 import {RegistrationScreen} from '../core/RegistrationScreen';
-import {HomeScreen} from '../core/HomeScreen';
+import {HomeStackContainer} from './stacks/HomeStackContainer';
+import {useTypedSelector} from '../hooks/useTypedSelector';
 
 const RootStack = createNativeStackNavigator();
 
 export const RootStackContainer = () => {
+  const isLogined = useTypedSelector(state => state.user.isLogined);
+
   return (
     <NavigationContainer>
-      <RootStack.Navigator initialRouteName={navigationStacks.registration}>
+      <RootStack.Navigator
+        initialRouteName={
+          isLogined ? navigationStacks.home : navigationStacks.registration
+        }>
         <RootStack.Screen
           name={navigationStacks.registration}
           component={RegistrationScreen}
@@ -18,7 +25,7 @@ export const RootStackContainer = () => {
         />
         <RootStack.Screen
           name={navigationStacks.home}
-          component={HomeScreen}
+          component={HomeStackContainer}
           options={{headerShown: false}}
         />
       </RootStack.Navigator>

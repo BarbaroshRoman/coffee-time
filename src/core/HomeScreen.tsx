@@ -52,13 +52,13 @@ export const HomeScreen: React.FC = () => {
     navigation.navigate(navigationHomePages.details as never, item as never);
   };
 
-  const renderCafeList = ({item}: {item: CafeInfo}) => (
-    <CafeListView item={item} goToCafe={goToCafe} />
-  );
+  const renderCafeList = ({item}: {item: CafeInfo}) => {
+    return <CafeListView item={item} goToCafe={goToCafe} />;
+  };
 
   return (
     <View style={styles.container}>
-      <HeaderComponent />
+      <HeaderComponent openDrawer={() => navigation.openDrawer()} />
       <FlatList
         data={cafeList}
         renderItem={renderCafeList}
