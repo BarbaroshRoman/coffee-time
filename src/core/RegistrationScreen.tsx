@@ -128,10 +128,18 @@ export const RegistrationScreen: React.FC = () => {
     setEmail('');
     setPassword('');
     setPasswordConfirmation('');
+    setUsername('');
+    setAvatar('');
   };
 
-  const additionalRegistration = (): void => {
-    const isErrorsHandled = registrationErrorHandler() ?? false;
+  const selectPersonalData = (): void => {
+    let targetErrorHandler = null;
+    if (choiceToEnter === REGISTRATION) {
+      targetErrorHandler = registrationErrorHandler();
+    } else {
+      targetErrorHandler = authorizationErrorHandler();
+    }
+    const isErrorsHandled = targetErrorHandler ?? false;
     isErrorsHandled && setChoiceToEnter(USERNAME);
   };
 
@@ -192,6 +200,8 @@ export const RegistrationScreen: React.FC = () => {
               sessionId: sessionId,
               email: email,
               password: password,
+              avatar: avatar,
+              userName: username,
               isLogined: true,
             }),
           );
@@ -265,7 +275,7 @@ export const RegistrationScreen: React.FC = () => {
           avatar={avatar}
           username={username}
           setUsername={setUsername}
-          additionalRegistration={additionalRegistration}
+          selectPersonalData={selectPersonalData}
           loading={loading}
         />
       </ImageBackground>

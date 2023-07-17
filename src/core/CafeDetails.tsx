@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingBottom: 8,
     paddingLeft: 22,
-    marginRight: '16%',
+    marginRight: '18%',
   },
   bottomContainer: {
     justifyContent: 'flex-end',

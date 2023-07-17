@@ -13,6 +13,7 @@ export type Colors = {
   darkGray: string;
   gainsboro: string;
   ghostWhite: string;
+  asparagus: string;
 };
 
 export const COLORS: Colors = {
@@ -30,4 +31,5 @@ export const COLORS: Colors = {
   darkGray: '#717171',
   gainsboro: '#f2f2f2',
   ghostWhite: '#bfbfbf',
+  asparagus: '#a0be74',
 };

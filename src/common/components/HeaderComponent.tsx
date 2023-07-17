@@ -15,7 +15,7 @@ export const HeaderComponent: React.FC<Props> = props => {
     <View style={styles.headerContainer}>
       <TouchableOpacity
         style={styles.icon}
-        onPress={() => (isGoBack ? goBackHandler() : openDrawer)}>
+        onPress={() => (isGoBack ? goBackHandler() : openDrawer())}>
         <FontAwesome
           name={isGoBack ? 'angle-left' : 'bars'}
           size={isGoBack ? 34 : 24}

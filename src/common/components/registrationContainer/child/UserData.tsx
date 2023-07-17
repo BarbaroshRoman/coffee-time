@@ -14,6 +14,7 @@ import {COLORS} from '../../../../../resources/colors';
 
 type Props = {
   registrationUser: () => void;
+  authorizationUser: () => void;
   goToPickImage: () => void;
   avatar: string;
   username: string;
@@ -24,6 +25,7 @@ type Props = {
 export const UserData = (props: Props) => {
   const {
     registrationUser,
+    authorizationUser,
     setUsername,
     username,
     avatar,
@@ -72,7 +74,7 @@ export const UserData = (props: Props) => {
         <Text style={styles.errorMessageText}>{errorMessage}</Text>
         <TouchableOpacity
           style={styles.confirmButton}
-          onPress={registrationUser}>
+          onPress={authorizationUser ? authorizationUser : registrationUser}>
           <Text style={styles.confirmText}>далее</Text>
         </TouchableOpacity>
       </>

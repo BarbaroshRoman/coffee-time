@@ -56,9 +56,12 @@ export const HomeScreen: React.FC = () => {
     return <CafeListView item={item} goToCafe={goToCafe} />;
   };
 
+  const openDrawer = (): void => {
+    navigation.openDrawer();
+  };
   return (
     <View style={styles.container}>
-      <HeaderComponent openDrawer={() => navigation.openDrawer()} />
+      <HeaderComponent openDrawer={openDrawer} />
       <FlatList
         data={cafeList}
         renderItem={renderCafeList}

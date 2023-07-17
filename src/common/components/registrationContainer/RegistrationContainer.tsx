@@ -28,7 +28,7 @@ type Props = {
   avatar: string;
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
-  additionalRegistration: () => void;
+  selectPersonalData: () => void;
   loading: boolean;
 };
 export const RegistrationContainer = (props: Props) => {
@@ -50,7 +50,7 @@ export const RegistrationContainer = (props: Props) => {
     avatar,
     username,
     setUsername,
-    additionalRegistration,
+    selectPersonalData,
     loading,
   } = props;
 
@@ -65,8 +65,8 @@ export const RegistrationContainer = (props: Props) => {
           confirmation={'Авторизоваться'}
           errorMessage={errorMessage}
           backMainMenu={backMainMenu}
-          authorizationUser={authorizationUser}
           loading={loading}
+          selectPersonalData={selectPersonalData}
         />
       );
     case REGISTRATION:
@@ -82,13 +82,14 @@ export const RegistrationContainer = (props: Props) => {
           backMainMenu={backMainMenu}
           passwordConfirmation={passwordConfirmation}
           setPasswordConfirmation={setPasswordConfirmation}
-          additionalRegistration={additionalRegistration}
+          selectPersonalData={selectPersonalData}
         />
       );
     case USERNAME:
       return (
         <UserData
           registrationUser={registrationUser}
+          authorizationUser={authorizationUser}
           goToPickImage={goToPickImage}
           avatar={avatar}
           username={username}

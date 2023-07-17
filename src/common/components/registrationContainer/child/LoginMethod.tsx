@@ -21,8 +21,7 @@ type Props = {
   confirmation: string;
   errorMessage: string;
   backMainMenu: () => void;
-  authorizationUser?: () => void;
-  additionalRegistration?: () => void;
+  selectPersonalData: () => void;
   loading?: boolean;
 };
 export const LoginMethod = (props: Props) => {
@@ -37,8 +36,7 @@ export const LoginMethod = (props: Props) => {
     isRegistration,
     passwordConfirmation,
     setPasswordConfirmation,
-    authorizationUser,
-    additionalRegistration,
+    selectPersonalData,
     loading,
   } = props;
 
@@ -63,6 +61,7 @@ export const LoginMethod = (props: Props) => {
           onChangeText={setPassword}
           value={password}
           placeholder="Введите пароль"
+          secureTextEntry={true}
         />
         {isRegistration && (
           <TextInput
@@ -70,21 +69,18 @@ export const LoginMethod = (props: Props) => {
             onChangeText={setPasswordConfirmation}
             value={passwordConfirmation}
             placeholder="Подтвердите пароль"
+            secureTextEntry={true}
           />
         )}
         <Text style={styles.errorHandlerText}>{errorMessage}</Text>
         <TouchableOpacity
           style={styles.confirmationButton}
-          onPress={() => {
-            authorizationUser
-              ? authorizationUser()
-              : additionalRegistration?.();
-          }}>
+          onPress={selectPersonalData}>
           <Text style={styles.registrationButtonText}>{confirmation}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.confirmationButton}
-          onPress={() => backMainMenu()}>
+          onPress={backMainMenu}>
           <Text style={styles.registrationButtonText}>Назад</Text>
         </TouchableOpacity>
       </View>
