@@ -20,7 +20,7 @@ export const CafeListView = (props: Props) => {
         <Text style={styles.addressText}>{item.address}</Text>
         <View style={styles.detailContainer}>
           <Text style={styles.detailText}>подробнее</Text>
-          <FontAwesome name={'angle-right'} size={16} style={styles.icon} />
+          <FontAwesome name={'angle-right'} size={16} style={styles.iconContainer} />
         </View>
       </View>
     </TouchableOpacity>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   detailText: {
     color: COLORS.ghostWhite,
   },
-  icon: {
+  iconContainer: {
     paddingLeft: 8,
     color: COLORS.ghostWhite,
   },

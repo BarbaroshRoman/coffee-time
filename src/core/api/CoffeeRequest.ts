@@ -6,7 +6,6 @@ class BaseRequest {
   };
 
   protected fetch(path: string, options: any): Promise<any> {
-    // const url = `http://176.31.32.73:8000${path}`;
     const url = `http://ci2.dextechnology.com:8000${path}`;
     return fetch(url, options);
   }

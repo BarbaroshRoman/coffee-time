@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import {HeaderComponent} from '../common/components/HeaderComponent';
@@ -8,10 +8,12 @@ import {useTypedSelector} from '../hooks/useTypedSelector';
 import {CafeListView} from '../common/components/CafeListView';
 import {COLORS} from '../../resources/colors';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
+import {replaceCafeLinks} from '../common/helpers/replaceCafeLinks';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
   const sessionId = useTypedSelector(state => state.user.sessionId);
+  const image = require('../../resources/images/image_no_coffe.png');
 
   const [cafeList, setCafeList] = useState<CafeInfo[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
@@ -19,49 +21,42 @@ export const HomeScreen: React.FC = () => {
   useEffect(() => {
     getAllCafe();
   }, []);
+
   const getAllCafe = async () => {
     const cafeRequest = new CafeClientRequest();
 
     try {
       const allCafe: CafeInfo[] | null = await cafeRequest.getAll(sessionId);
 
-      const oldLinks = [
-        'http://lovecafedecafe.com/templates/beez_20/logo0001.jpg',
-        'http://company.es-pmr.com/uploads/764SDC10782.jpg',
-      ];
-      const newLinks = [
-        'https://idei.club/uploads/posts/2022-11/1667335707_2-idei-club-p-dizain-kafe-snaruzhi-instagram-2.jpg',
-        'https://interiorscafe.ru/wp-content/uploads/pasta-grill-cafe-01.jpg',
-      ];
-
-      const newCafeList: CafeInfo[] | undefined = allCafe?.map(el => {
-        if (el.images === oldLinks[0]) {
-          el.images = newLinks[0];
-        } else if (el.images === oldLinks[1]) {
-          el.images = newLinks[1];
-        }
-        return el;
-      });
+      const newCafeList: CafeInfo[] | undefined = replaceCafeLinks(allCafe);
       setCafeList(newCafeList ?? []);
     } catch {
-      setErrorMessage('Ошибка. Не удалось получить данные.');
+      setErrorMessage('По вашему запросу ничего не найдено');
     }
   };
 
   const goToCafe = (item: CafeInfo): void => {
-    navigation.navigate(navigationHomePages.details as never, item as never);
+    navigation.navigate(
+      navigationHomePages.cafeDetails as never,
+      item as never,
+    );
   };
 
   const renderCafeList = ({item}: {item: CafeInfo}) => {
     return <CafeListView item={item} goToCafe={goToCafe} />;
   };
-
   const openDrawer = (): void => {
     navigation.openDrawer();
   };
   return (
     <View style={styles.container}>
       <HeaderComponent openDrawer={openDrawer} />
+      {!cafeList.length && (
+        <View style={styles.emptyListContainer}>
+          <Image source={image} style={styles.image} />
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        </View>
+      )}
       <FlatList
         data={cafeList}
         renderItem={renderCafeList}
@@ -74,6 +69,20 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.gainsboro,
+    backgroundColor: COLORS.white,
+  },
+  emptyListContainer: {
+    alignItems: 'center',
+  },
+  image: {
+    width: 180,
+    height: 180,
+    marginLeft: 20,
+    marginTop: '22%',
+  },
+  errorText: {
+    color: COLORS.slateGray,
+    fontSize: 16,
+    marginTop: '24%',
   },
 });

@@ -25,7 +25,7 @@ export const DrawerStackContainer = () => {
         options={{
           headerShown: false,
           drawerIcon: ({color}) => (
-            <FontAwesome5 name={'coffee'} color={color} size={16}/>
+            <FontAwesome5 name={'coffee'} color={color} size={16} />
           ),
         }}
       />

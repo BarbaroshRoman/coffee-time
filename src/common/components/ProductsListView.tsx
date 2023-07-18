@@ -1,23 +1,27 @@
 import React from 'react';
 import {IProductBriefInfo} from '../../core/api/CoffeeRequest';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLORS} from '../../../resources/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type Props = {
   item: IProductBriefInfo;
+  goToProduct: (item: IProductBriefInfo) => void;
 };
 export const ProductsListView = (props: Props) => {
-  const item = props.item;
+  const {item, goToProduct} = props;
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => goToProduct(item)}>
       <Text style={styles.name}>{item.name}</Text>
       <Image source={{uri: item.imagesPath}} style={styles.image} />
       <View style={styles.bottomContainer}>
         <Text style={styles.price}>{item.price} ₽</Text>
         <AntDesign name={'hearto'} color={COLORS.ghostWhite} size={20} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -2,9 +2,10 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {navigationStacks} from '../components/navigationStacks';
-import {CafeDetails} from '../../core/CafeDetails';
+import {CafeDetailsScreen} from '../../core/CafeDetailsScreen';
 import {navigationHomePages} from '../components/navigationHomePages';
 import {DrawerStackContainer} from './DrawerStackContainer';
+import { ProductDetailsScreen } from "../../core/ProductDetailsScreen";
 
 const HomeStack = createNativeStackNavigator();
 
@@ -17,8 +18,13 @@ export const HomeStackContainer = () => {
         options={{headerShown: false}}
       />
       <HomeStack.Screen
-        name={navigationHomePages.details}
-        component={CafeDetails}
+        name={navigationHomePages.cafeDetails}
+        component={CafeDetailsScreen}
+        options={{headerShown: false}}
+      />
+      <HomeStack.Screen
+        name={navigationHomePages.productDetails}
+        component={ProductDetailsScreen}
         options={{headerShown: false}}
       />
     </HomeStack.Navigator>

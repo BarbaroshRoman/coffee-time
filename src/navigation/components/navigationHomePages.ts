@@ -1,7 +1,9 @@
 interface INavigationHomePages {
-  details: string;
+  cafeDetails: string;
+  productDetails: string;
 }
 
 export const navigationHomePages: INavigationHomePages = {
-  details: 'CafeDetails',
+  cafeDetails: 'CafeDetails',
+  productDetails: 'droductDetails',
 };

@@ -5,7 +5,7 @@ import {COLORS} from '../../../resources/colors';
 
 type Props = {
   goBackHandler?: () => void;
-  isGoBack?: boolean;
+  isGoBack: boolean;
   openDrawer?: () => void;
 };
 export const HeaderComponent: React.FC<Props> = props => {
@@ -14,7 +14,7 @@ export const HeaderComponent: React.FC<Props> = props => {
   return (
     <View style={styles.headerContainer}>
       <TouchableOpacity
-        style={styles.icon}
+        style={styles.iconContainer}
         onPress={() => (isGoBack ? goBackHandler() : openDrawer())}>
         <FontAwesome
           name={isGoBack ? 'angle-left' : 'bars'}
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     height: '10%',
     backgroundColor: COLORS.white,
   },
-  icon: {
+  iconContainer: {
     paddingHorizontal: '4%',
     justifyContent: 'center',
   },
