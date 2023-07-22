@@ -12,7 +12,7 @@ class BaseRequest {
 }
 
 export class CafeClientRequest extends BaseRequest {
-  getAll(sessionId: string, config: any = {}): Promise<CafeInfo[] | null> {
+  getAll(sessionId: string | null, config: any = {}): Promise<CafeInfo[] | null> {
     return this.fetch(
       '/api/Cafe/GetAll',
       Object.assign(
@@ -293,7 +293,7 @@ export class CafeRequest implements ICafeRequest {
 }
 
 export interface ICafeRequest {
-  sessionId: string;
+  sessionId: string | null;
   cafeId: string | undefined;
 }
 
@@ -389,7 +389,7 @@ export class ProductRequest implements IProductRequest {
 }
 
 export interface IProductRequest {
-  sessionId: string;
+  sessionId: string | null;
   productId: string;
 }
 

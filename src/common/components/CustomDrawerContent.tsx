@@ -13,11 +13,13 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
 
 import {useTypedSelector} from '../../hooks/useTypedSelector';
 import {COLORS} from '../../../resources/colors';
-import {registrationUserSuccess} from '../../modules/redux/reducers/user/userReducer';
+import {
+  userLogOut,
+  userPending,
+} from '../../modules/redux/reducers/user/userReducer';
 import {navigationStacks} from '../../navigation/components/navigationStacks';
 
 export const CustomDrawerContent: React.FC<
@@ -26,20 +28,15 @@ export const CustomDrawerContent: React.FC<
   const avatar = useTypedSelector(state => state.user.avatar);
   const username = useTypedSelector(state => state.user.userName);
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = props.navigation;
 
   const logOutHelper = useCallback((): void => {
-    dispatch(
-      registrationUserSuccess({
-        userName: '',
-        avatar: '',
-        isLogined: false,
-        password: '',
-        email: '',
-        sessionId: '',
-      }),
-    );
-    navigation.navigate(navigationStacks.registration as never);
+    navigation.closeDrawer();
+    dispatch(userPending());
+    setTimeout(() => {
+      dispatch(userLogOut());
+      navigation.navigate(navigationStacks.registration as never);
+    }, 4000);
   }, [dispatch, navigation]);
 
   const logOut = () =>
@@ -57,9 +54,9 @@ export const CustomDrawerContent: React.FC<
     <View style={styles.customDrawerContainer}>
       <View style={styles.headerContainer}>
         {avatar ? (
-          <Image source={{uri: avatar}} style={styles.image} />
+          <Image source={{uri: avatar}} style={styles.coffeeImage} />
         ) : (
-          <View style={styles.image} />
+          <View style={styles.coffeeImage} />
         )}
         <Text style={styles.usernameText}>{username}</Text>
       </View>
@@ -82,7 +79,7 @@ const styles = StyleSheet.create({
     padding: 30,
     alignItems: 'center',
   },
-  image: {
+  coffeeImage: {
     backgroundColor: COLORS.ghostWhite,
     height: 100,
     width: 100,

@@ -1,5 +1,5 @@
 export interface IUserState {
-  sessionId: string;
+  sessionId: string | null;
   email: string;
   password: string;
   avatar: string;

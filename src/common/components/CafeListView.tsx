@@ -1,26 +1,30 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {CafeInfo} from '../../core/api/CoffeeRequest';
+import {ICafeInfo} from '../../core/api/CoffeeRequest';
 import {COLORS} from '../../../resources/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 type Props = {
-  item: CafeInfo;
-  goToCafe: (item: CafeInfo) => void;
+  item: ICafeInfo;
+  goToCafe: (item: ICafeInfo) => void;
 };
 export const CafeListView = (props: Props) => {
   const {item, goToCafe} = props;
 
   return (
     <TouchableOpacity style={styles.container} onPress={() => goToCafe(item)}>
-      <Image source={{uri: item.images}} style={styles.image} />
+      <Image source={{uri: item.images}} style={styles.coffeeImage} />
       <View style={styles.cafeTableOfContents}>
         <Text style={styles.cafeName}>{item.name}</Text>
         <Text style={styles.addressHelperText}>мы находимся:</Text>
         <Text style={styles.addressText}>{item.address}</Text>
         <View style={styles.detailContainer}>
           <Text style={styles.detailText}>подробнее</Text>
-          <FontAwesome name={'angle-right'} size={16} style={styles.iconContainer} />
+          <FontAwesome
+            name={'angle-right'}
+            size={16}
+            style={styles.iconContainer}
+          />
         </View>
       </View>
     </TouchableOpacity>
@@ -34,7 +38,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     elevation: 2,
   },
-  image: {
+  coffeeImage: {
     height: 126,
     width: 126,
   },

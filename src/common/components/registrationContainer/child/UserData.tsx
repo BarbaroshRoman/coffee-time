@@ -8,85 +8,68 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Spinner from 'react-native-spinkit';
 
 import {COLORS} from '../../../../../resources/colors';
 
 type Props = {
-  registrationUser: () => void;
-  authorizationUser: () => void;
   goToPickImage: () => void;
   avatar: string;
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
   errorMessage: string;
-  loading: boolean;
+  additionalRegistration: () => void;
 };
 export const UserData = (props: Props) => {
   const {
-    registrationUser,
-    authorizationUser,
     setUsername,
     username,
     avatar,
     goToPickImage,
     errorMessage,
-    loading,
+    additionalRegistration,
   } = props;
 
-  if (loading) {
-    return (
-      <View style={styles.loading}>
-        <Spinner type="Wave" color={COLORS.white} size={80} />
+  return (
+    <>
+      <View style={styles.imageContainer}>
+        {avatar ? (
+          <TouchableOpacity onPress={goToPickImage}>
+            <Image source={{uri: avatar}} style={styles.image} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={goToPickImage}>
+            <View style={styles.image}>
+              <Text style={styles.selectImageText}>Выбрать фото</Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
-    );
-  } else {
-    return (
-      <>
-        <View style={styles.imageContainer}>
-          {avatar ? (
-            <TouchableOpacity onPress={goToPickImage}>
-              <Image source={{uri: avatar}} style={styles.image} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={goToPickImage}>
-              <View style={styles.image}>
-                <Text style={styles.selectImageText}>Выбрать фото</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.usernameInputContainer}>
-          <TextInput
-            style={styles.usernameInput}
-            onChangeText={setUsername}
-            value={username}
-            placeholder="Ваше имя"
-            placeholderTextColor={COLORS.white}
-          />
-          <FontAwesome5
-            name={'pencil-alt'}
-            color={COLORS.white}
-            size={20}
-            style={styles.pencilIcon}
-          />
-        </View>
-        <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={authorizationUser ? authorizationUser : registrationUser}>
-          <Text style={styles.confirmText}>далее</Text>
-        </TouchableOpacity>
-      </>
-    );
-  }
+      <View style={styles.usernameInputContainer}>
+        <TextInput
+          style={styles.usernameInput}
+          onChangeText={setUsername}
+          value={username}
+          placeholder="Ваше имя"
+          placeholderTextColor={COLORS.white}
+        />
+        <FontAwesome5
+          name={'pencil-alt'}
+          color={COLORS.white}
+          size={20}
+          style={styles.pencilIcon}
+        />
+      </View>
+      <Text style={styles.errorMessageText}>{errorMessage}</Text>
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={additionalRegistration}>
+        <Text style={styles.confirmText}>далее</Text>
+      </TouchableOpacity>
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
-  loading: {
-    marginTop: '40%',
-    alignSelf: 'center',
-  },
   imageContainer: {
     alignSelf: 'center',
     marginTop: '8%',

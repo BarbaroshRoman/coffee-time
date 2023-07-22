@@ -5,7 +5,7 @@ import {COLORS} from '../../../resources/colors';
 
 type Props = {
   goBackHandler?: () => void;
-  isGoBack: boolean;
+  isGoBack?: boolean;
   openDrawer?: () => void;
 };
 export const HeaderComponent: React.FC<Props> = props => {
@@ -15,7 +15,7 @@ export const HeaderComponent: React.FC<Props> = props => {
     <View style={styles.headerContainer}>
       <TouchableOpacity
         style={styles.iconContainer}
-        onPress={() => (isGoBack ? goBackHandler() : openDrawer())}>
+        onPress={isGoBack ? goBackHandler : openDrawer}>
         <FontAwesome
           name={isGoBack ? 'angle-left' : 'bars'}
           size={isGoBack ? 34 : 24}

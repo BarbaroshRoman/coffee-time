@@ -5,8 +5,9 @@ import {COLORS} from '../../../../resources/colors';
 import {LoginMethod} from './child/LoginMethod';
 import {
   AUTHORIZATION,
+  IVisiblePassword,
   REGISTRATION,
-  USERNAME,
+  USERDATA,
 } from '../../../core/RegistrationScreen';
 import {UserData} from './child/UserData';
 
@@ -28,8 +29,10 @@ type Props = {
   avatar: string;
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
-  selectPersonalData: () => void;
   loading: boolean;
+  additionalRegistration: () => void;
+  isVisible: IVisiblePassword;
+  setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
 };
 export const RegistrationContainer = (props: Props) => {
   const {
@@ -50,8 +53,10 @@ export const RegistrationContainer = (props: Props) => {
     avatar,
     username,
     setUsername,
-    selectPersonalData,
     loading,
+    additionalRegistration,
+    isVisible,
+    setIsVisible,
   } = props;
 
   switch (choiceToEnter) {
@@ -65,14 +70,16 @@ export const RegistrationContainer = (props: Props) => {
           confirmation={'Авторизоваться'}
           errorMessage={errorMessage}
           backMainMenu={backMainMenu}
-          loading={loading}
-          selectPersonalData={selectPersonalData}
+          authorizationUser={authorizationUser}
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
         />
       );
     case REGISTRATION:
       return (
         <LoginMethod
           isRegistration={true}
+          registrationUser={registrationUser}
           email={email}
           setEmail={setEmail}
           password={password}
@@ -82,20 +89,20 @@ export const RegistrationContainer = (props: Props) => {
           backMainMenu={backMainMenu}
           passwordConfirmation={passwordConfirmation}
           setPasswordConfirmation={setPasswordConfirmation}
-          selectPersonalData={selectPersonalData}
+          loading={loading}
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
         />
       );
-    case USERNAME:
+    case USERDATA:
       return (
         <UserData
-          registrationUser={registrationUser}
-          authorizationUser={authorizationUser}
           goToPickImage={goToPickImage}
           avatar={avatar}
           username={username}
           setUsername={setUsername}
           errorMessage={errorMessage}
-          loading={loading}
+          additionalRegistration={additionalRegistration}
         />
       );
     default:

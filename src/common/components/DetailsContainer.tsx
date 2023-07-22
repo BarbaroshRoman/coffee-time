@@ -17,7 +17,7 @@ export const DetailsContainer = (props: IProps) => {
         <Text style={styles.cafeaddress}>{address}</Text>
         <View style={styles.iconContainer}>
           <View style={styles.roundFrame}>
-            <AntDesign name={'hearto'} color={COLORS.ghostWhite} size={28} />
+            <AntDesign name={'hearto'} color={COLORS.red} size={28} />
           </View>
         </View>
       </View>

@@ -7,19 +7,31 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 type Props = {
   item: IProductBriefInfo;
   goToProduct: (item: IProductBriefInfo) => void;
+  setAndUnsetFavoriteProduct: (item: IProductBriefInfo, method: string) => void;
 };
 export const ProductsListView = (props: Props) => {
-  const {item, goToProduct} = props;
+  const {item, goToProduct, setAndUnsetFavoriteProduct} = props;
 
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => goToProduct(item)}>
       <Text style={styles.name}>{item.name}</Text>
-      <Image source={{uri: item.imagesPath}} style={styles.image} />
+      <Image source={{uri: item.imagesPath}} style={styles.coffeeImage} />
       <View style={styles.bottomContainer}>
         <Text style={styles.price}>{item.price} ₽</Text>
-        <AntDesign name={'hearto'} color={COLORS.ghostWhite} size={20} />
+        <TouchableOpacity
+          onPress={() => {
+            item.favorite
+              ? setAndUnsetFavoriteProduct(item, 'unset')
+              : setAndUnsetFavoriteProduct(item, 'set');
+          }}>
+          <AntDesign
+            name={item.favorite ? 'heart' : 'hearto'}
+            color={item.favorite ? COLORS.red : COLORS.ghostWhite}
+            size={20}
+          />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -41,7 +53,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontFamily: 'Lobster-Regular',
   },
-  image: {
+  coffeeImage: {
     width: '100%',
     height: 150,
   },

@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
+  Alert,
   FlatList,
   Image,
   ImageBackground,
@@ -7,28 +8,36 @@ import {
   Text,
   View,
 } from 'react-native';
-import {HeaderComponent} from '../common/components/HeaderComponent';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch} from 'react-redux';
+
 import {
   CafeRequest,
+  FavoriteClientRequest,
   ICafeInfo,
   ICafeRequest,
   IProductBriefInfo,
   IProductRequest,
-  ProductBriefInfo,
   ProductClientRequest,
+  ProductRequest,
 } from './api/CoffeeRequest';
 import {COLORS} from '../../resources/colors';
-import LinearGradient from 'react-native-linear-gradient';
 import {useTypedSelector} from '../hooks/useTypedSelector';
 import {ProductsListView} from '../common/components/ProductsListView';
 import {DetailsContainer} from '../common/components/DetailsContainer';
+import {HeaderComponent} from '../common/components/HeaderComponent';
 import {replaceProductsLinks} from '../common/helpers/replaceProductsLinks';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
+import {
+  addDrink,
+  removeDrink,
+} from '../modules/redux/reducers/favorites/favoritesReducer';
 
 export const CafeDetailsScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<Record<string, ICafeInfo>, string>>();
+  const dispatch = useDispatch();
   const sessionId = useTypedSelector(state => state.user.sessionId);
   const image = require('../../resources/images/image_no_coffe.png');
 
@@ -43,7 +52,7 @@ export const CafeDetailsScreen: React.FC = () => {
     navigation.goBack();
   }, [navigation]);
 
-  const getAllProduct = async () => {
+  const getAllProduct = useCallback(async (): Promise<void> => {
     const productsRequest = new ProductClientRequest();
     const cafeData: ICafeRequest = {
       sessionId: sessionId,
@@ -62,24 +71,66 @@ export const CafeDetailsScreen: React.FC = () => {
         'Попробуйте вернуться к нам позже',
       ]);
     }
+  }, [route.params.id, sessionId]);
+
+  const setAndUnsetFavoriteProduct = useCallback(
+    async (item: IProductBriefInfo, method: string): Promise<void> => {
+      const favoriteClientRequest = new FavoriteClientRequest();
+      const product: IProductRequest = {
+        sessionId: sessionId,
+        productId: item.id,
+      };
+      try {
+        if (method === 'set') {
+          const favoriteRequest: boolean | null =
+            await favoriteClientRequest.set(new ProductRequest(product));
+          if (favoriteRequest) {
+            item.favorite = favoriteRequest;
+            dispatch(addDrink(item));
+          }
+        } else if (method === 'unset') {
+          const favoriteRequest: boolean | null =
+            await favoriteClientRequest.unset(new ProductRequest(product));
+          if (favoriteRequest) {
+            item.favorite = favoriteRequest;
+            dispatch(removeDrink(item.id));
+          }
+        }
+      } catch {
+        showError('Попробуйте позже');
+      } finally {
+        getAllProduct();
+      }
+    },
+    [dispatch, sessionId],
+  );
+
+  const showError = (errorMes: string): void => {
+    Alert.alert('Ошибка', errorMes, [
+      {
+        text: 'Ok',
+      },
+    ]);
   };
 
   const goToProduct = useCallback(
     (item: IProductBriefInfo): void => {
-      const newItem: IProductRequest = {
-        sessionId: sessionId,
-        productId: item.id,
-      };
       navigation.navigate(
         navigationHomePages.productDetails as never,
-        newItem as never,
+        item as never,
       );
     },
     [navigation],
   );
 
   const renderProductsList = ({item}: {item: IProductBriefInfo}) => {
-    return <ProductsListView item={item} goToProduct={goToProduct} />;
+    return (
+      <ProductsListView
+        item={item}
+        goToProduct={goToProduct}
+        setAndUnsetFavoriteProduct={setAndUnsetFavoriteProduct}
+      />
+    );
   };
 
   return (
@@ -112,7 +163,7 @@ export const CafeDetailsScreen: React.FC = () => {
         </>
       ) : (
         <View style={styles.emptyListContainer}>
-          <Image source={image} style={styles.image} />
+          <Image source={image} style={styles.coffeeImage} />
           <Text style={styles.errorText}>{errorMessages[0]}</Text>
           <Text style={styles.errorText}>{errorMessages[1]}</Text>
         </View>
@@ -144,7 +195,7 @@ const styles = StyleSheet.create({
   emptyListContainer: {
     alignItems: 'center',
   },
-  image: {
+  coffeeImage: {
     width: 180,
     height: 180,
     marginLeft: 20,

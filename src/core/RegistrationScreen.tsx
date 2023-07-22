@@ -5,6 +5,7 @@ import {
   Dimensions,
   ImageBackground,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,14 +13,18 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import ImagePicker from 'react-native-image-crop-picker';
+import Spinner from 'react-native-spinkit';
 
 import {COLORS} from '../../resources/colors';
 import {RegistrationTitle} from '../common/components/RegistrationTitle';
 import {RegistrationContainer} from '../common/components/registrationContainer/RegistrationContainer';
 import {
   registrationUserError,
-  registrationUserPending,
+  userPending,
   registrationUserSuccess,
+  saveUserData,
+  authorizationUserSuccess,
+  authorizationUserError,
 } from '../modules/redux/reducers/user/userReducer';
 import {
   IUserRequest,
@@ -29,10 +34,15 @@ import {
 import {navigationStacks} from '../navigation/components/navigationStacks';
 import {useTypedSelector} from '../hooks/useTypedSelector';
 
-export const MAIN_MENU = 'main menu';
-export const REGISTRATION = 'Registration';
-export const AUTHORIZATION = 'Authorization';
-export const USERNAME = 'Username';
+export const MAIN_MENU = 'MAIN_MENU';
+export const REGISTRATION = 'REGISTRATION';
+export const AUTHORIZATION = 'AUTHORIZATION';
+export const USERDATA = 'USERDATA';
+
+export interface IVisiblePassword {
+  password: boolean;
+  passwordConfirmation: boolean;
+}
 
 export const RegistrationScreen: React.FC = () => {
   const imageBackground = require('../../resources/images/registrationScreenImage.png');
@@ -50,6 +60,11 @@ export const RegistrationScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [avatar, setAvatar] = useState('');
   const [username, setUsername] = useState('');
+  const [isVisible, setIsVisible] = useState<IVisiblePassword>({
+    password: true,
+    passwordConfirmation: true,
+  });
+
   const init = async () => {
     await SystemNavigationBar.setNavigationColor(
       COLORS.lightGray,
@@ -76,7 +91,7 @@ export const RegistrationScreen: React.FC = () => {
     }).start();
   }, [fadeAnim]);
 
-  const registrationMailHandler = useCallback(() => {
+  const registrationMailHandler = useCallback((): string => {
     if (
       (email.length > 9 && email.toLowerCase().includes('@mail.ru')) ||
       (email.length > 9 && email.toLowerCase().includes('@gmail.com'))
@@ -86,7 +101,7 @@ export const RegistrationScreen: React.FC = () => {
     return 'Введите свой email';
   }, [email]);
 
-  const registrationPasswordHandler = useCallback(() => {
+  const registrationPasswordHandler = useCallback((): string => {
     const characterCheck = !!password.match(/^[a-zA-Z0-9@.,_-]+$/);
 
     if (!characterCheck || password.length < 5 || password.length > 15) {
@@ -96,7 +111,7 @@ export const RegistrationScreen: React.FC = () => {
     }
   }, [password]);
 
-  const registrationErrorHandler = () => {
+  const registrationErrorHandler = (): boolean | undefined => {
     const mailError = registrationMailHandler();
     const passwordError = registrationPasswordHandler();
 
@@ -112,7 +127,7 @@ export const RegistrationScreen: React.FC = () => {
     }
   };
 
-  const authorizationErrorHandler = () => {
+  const authorizationErrorHandler = (): boolean | undefined => {
     const mailError = registrationMailHandler();
     const passwordError = registrationPasswordHandler();
 
@@ -134,23 +149,12 @@ export const RegistrationScreen: React.FC = () => {
     setPasswordConfirmation('');
     setUsername('');
     setAvatar('');
+    setIsVisible({password: true, passwordConfirmation: true});
   };
 
-  const selectPersonalData = (): void => {
-    let targetErrorHandler = null;
-    if (choiceToEnter === REGISTRATION) {
-      targetErrorHandler = registrationErrorHandler();
-    } else {
-      targetErrorHandler = authorizationErrorHandler();
-    }
-    const isErrorsHandled = targetErrorHandler ?? false;
-    isErrorsHandled && setChoiceToEnter(USERNAME);
-  };
-
-  const registrationUser = useCallback(async () => {
-    if (!username) {
-      setErrorMessage('Поле не должно быть пустым');
-    } else {
+  const registrationUser = useCallback(async (): Promise<void> => {
+    const isErrorsHandled = registrationErrorHandler();
+    if (isErrorsHandled) {
       const userRequest = new UserClientRequest();
       const item = {
         email: email,
@@ -158,7 +162,7 @@ export const RegistrationScreen: React.FC = () => {
       };
 
       try {
-        dispatch(registrationUserPending());
+        dispatch(userPending());
         const sessionId = await userRequest.register(new UserRequest(item));
         setTimeout(() => {
           dispatch(
@@ -166,13 +170,10 @@ export const RegistrationScreen: React.FC = () => {
               sessionId: sessionId,
               email: email,
               password: password,
-              avatar: avatar,
-              userName: username,
               isLogined: true,
             }),
           );
-          navigation.navigate(navigationStacks.home as never);
-          backMainMenu();
+          setChoiceToEnter(USERDATA);
         }, 2000);
       } catch {
         setTimeout(() => {
@@ -182,9 +183,27 @@ export const RegistrationScreen: React.FC = () => {
         setUsername('');
       }
     }
-  }, [avatar, dispatch, email, navigation, password, username]);
+  }, [dispatch, email, password, passwordConfirmation]);
 
-  const authorizationUser = useCallback(async () => {
+  const additionalRegistration = useCallback((): void => {
+    if (username) {
+      dispatch(userPending());
+      setTimeout(() => {
+        dispatch(
+          saveUserData({
+            avatar: avatar,
+            userName: username,
+          }),
+        );
+        navigation.navigate(navigationStacks.home as never);
+        backMainMenu();
+      }, 5000);
+    } else {
+      setErrorMessage('Поле не должно быть пустым');
+    }
+  }, [avatar, dispatch, navigation, username]);
+
+  const authorizationUser = useCallback(async (): Promise<void> => {
     const isErrorsHandled = authorizationErrorHandler() ?? false;
     if (isErrorsHandled) {
       const userRequest = new UserClientRequest();
@@ -194,18 +213,16 @@ export const RegistrationScreen: React.FC = () => {
       };
 
       try {
-        dispatch(registrationUserPending());
+        dispatch(userPending());
         const sessionId = await userRequest.authorization(
           new UserRequest(item),
         );
         setTimeout(() => {
           dispatch(
-            registrationUserSuccess({
+            authorizationUserSuccess({
               sessionId: sessionId,
               email: email,
               password: password,
-              avatar: avatar,
-              userName: username,
               isLogined: true,
             }),
           );
@@ -214,32 +231,19 @@ export const RegistrationScreen: React.FC = () => {
         }, 5000);
       } catch {
         setTimeout(() => {
-          dispatch(registrationUserError('Неверно введен email и/или пароль'));
+          dispatch(authorizationUserError('Неверно введен email и/или пароль'));
         }, 2000);
       }
     }
   }, [dispatch, email, navigation, password]);
 
-  const showError = useCallback(
-    (errorMes: any) => {
-      Alert.alert('Ошибка', errorMes, [
-        {
-          text: 'Ok',
-          onPress: () => {
-            dispatch(
-              registrationUserSuccess({
-                sessionId: '',
-                email: '',
-                password: '',
-                isLogined: false,
-              }),
-            );
-          },
-        },
-      ]);
-    },
-    [dispatch],
-  );
+  const showError = (errorMes: string): void => {
+    Alert.alert('Ошибка', errorMes, [
+      {
+        text: 'Ok',
+      },
+    ]);
+  };
 
   const goToPickImage = () => {
     ImagePicker.openPicker({
@@ -251,43 +255,72 @@ export const RegistrationScreen: React.FC = () => {
     });
   };
 
-  return (
-    <View style={styles.container}>
-      <ImageBackground source={imageBackground} style={styles.imageBackground}>
-        <View style={styles.gradientContainer}>
-          <LinearGradient
-            colors={['transparent', 'rgba(205,205,205,0.6)']}
-            style={styles.gradient}
+  if (
+    loading &&
+    (choiceToEnter === AUTHORIZATION || choiceToEnter === USERDATA)
+  ) {
+    return (
+      <View style={styles.authorizationLoading}>
+        <Text style={styles.titleText}>CoffeTime</Text>
+        <Spinner type="Wave" color={COLORS.black} size={80} />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <ImageBackground
+          source={imageBackground}
+          style={styles.imageBackground}>
+          <View style={styles.gradientContainer}>
+            <LinearGradient
+              colors={['transparent', 'rgba(205,205,205,0.6)']}
+              style={styles.gradient}
+            />
+          </View>
+          <RegistrationTitle fadeAnim={fadeAnim} />
+          <RegistrationContainer
+            fadeAnim={fadeAnim}
+            choiceToEnter={choiceToEnter}
+            setChoiceToEnter={setChoiceToEnter}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            passwordConfirmation={passwordConfirmation}
+            setPasswordConfirmation={setPasswordConfirmation}
+            errorMessage={errorMessage}
+            backMainMenu={backMainMenu}
+            registrationUser={registrationUser}
+            authorizationUser={authorizationUser}
+            goToPickImage={goToPickImage}
+            avatar={avatar}
+            username={username}
+            setUsername={setUsername}
+            loading={loading}
+            additionalRegistration={additionalRegistration}
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
           />
-        </View>
-        <RegistrationTitle fadeAnim={fadeAnim} />
-        <RegistrationContainer
-          fadeAnim={fadeAnim}
-          choiceToEnter={choiceToEnter}
-          setChoiceToEnter={setChoiceToEnter}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          passwordConfirmation={passwordConfirmation}
-          setPasswordConfirmation={setPasswordConfirmation}
-          errorMessage={errorMessage}
-          backMainMenu={backMainMenu}
-          registrationUser={registrationUser}
-          authorizationUser={authorizationUser}
-          goToPickImage={goToPickImage}
-          avatar={avatar}
-          username={username}
-          setUsername={setUsername}
-          selectPersonalData={selectPersonalData}
-          loading={loading}
-        />
-      </ImageBackground>
-    </View>
-  );
+        </ImageBackground>
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
+  authorizationLoading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: '8%',
+  },
+  titleText: {
+    fontSize: 40,
+    fontFamily: 'Lobster-Regular',
+    color: COLORS.dimGray,
+    borderBottomWidth: 1,
+    borderRadius: 8,
+  },
   container: {
     flex: 1,
   },

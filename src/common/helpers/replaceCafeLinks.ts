@@ -1,4 +1,4 @@
-import {CafeInfo} from '../../core/api/CoffeeRequest';
+import { CafeInfo, ICafeInfo } from "../../core/api/CoffeeRequest";
 
 const oldLinks = [
   'http://lovecafedecafe.com/templates/beez_20/logo0001.jpg',
@@ -9,7 +9,7 @@ const newLinks = [
   'https://interiorscafe.ru/wp-content/uploads/pasta-grill-cafe-01.jpg',
 ];
 
-export const replaceCafeLinks = (allCafe: CafeInfo[] | null) => {
+export const replaceCafeLinks = (allCafe: ICafeInfo[] | null) => {
   return allCafe?.map(el => {
     if (el.images === oldLinks[0]) {
       el.images = newLinks[0];

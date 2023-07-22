@@ -5,5 +5,5 @@ interface INavigationHomePages {
 
 export const navigationHomePages: INavigationHomePages = {
   cafeDetails: 'CafeDetails',
-  productDetails: 'droductDetails',
+  productDetails: 'productDetails',
 };

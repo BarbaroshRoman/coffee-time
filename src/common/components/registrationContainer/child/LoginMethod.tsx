@@ -6,12 +6,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Spinner from 'react-native-spinkit';
 
 import {COLORS} from '../../../../../resources/colors';
-import Spinner from 'react-native-spinkit';
+import {IVisiblePassword} from '../../../../core/RegistrationScreen';
+import {InputContainer} from '../../InputContainer';
 
 type Props = {
   isRegistration?: boolean;
+  registrationUser?: () => void;
+  authorizationUser?: () => void;
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   password: string;
@@ -21,8 +25,9 @@ type Props = {
   confirmation: string;
   errorMessage: string;
   backMainMenu: () => void;
-  selectPersonalData: () => void;
   loading?: boolean;
+  isVisible: IVisiblePassword;
+  setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
 };
 export const LoginMethod = (props: Props) => {
   const {
@@ -36,46 +41,50 @@ export const LoginMethod = (props: Props) => {
     isRegistration,
     passwordConfirmation,
     setPasswordConfirmation,
-    selectPersonalData,
     loading,
+    authorizationUser,
+    registrationUser,
+    isVisible,
+    setIsVisible,
   } = props;
 
-  if (loading) {
+  if (loading && isRegistration) {
     return (
-      <View style={styles.loading}>
+      <View style={styles.registrationLoading}>
         <Spinner type="Wave" color={COLORS.white} size={80} />
       </View>
     );
   } else {
     return (
-      <View style={styles.inputContainer}>
+      <View style={styles.container}>
         <TextInput
-          style={styles.registrationInput}
+          style={[styles.registrationInput, {marginLeft: 4}]}
           onChangeText={setEmail}
           value={email}
           placeholder="Введите email"
           autoComplete={'email'}
         />
-        <TextInput
-          style={styles.registrationInput}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Введите пароль"
-          secureTextEntry={true}
+        <InputContainer
+          password={password}
+          setPassword={setPassword}
+          placeholder={'Введите пароль'}
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
         />
         {isRegistration && (
-          <TextInput
-            style={styles.registrationInput}
-            onChangeText={setPasswordConfirmation}
-            value={passwordConfirmation}
-            placeholder="Подтвердите пароль"
-            secureTextEntry={true}
+          <InputContainer
+            password={passwordConfirmation}
+            setPassword={setPasswordConfirmation}
+            placeholder={'Подтвердите пароль'}
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            isRegistration={isRegistration}
           />
         )}
         <Text style={styles.errorHandlerText}>{errorMessage}</Text>
         <TouchableOpacity
           style={styles.confirmationButton}
-          onPress={selectPersonalData}>
+          onPress={isRegistration ? registrationUser : authorizationUser}>
           <Text style={styles.registrationButtonText}>{confirmation}</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -89,16 +98,17 @@ export const LoginMethod = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  loading: {
+  registrationLoading: {
     marginTop: '40%',
     alignSelf: 'center',
   },
-  inputContainer: {
+  container: {
     marginTop: '4%',
     marginHorizontal: '12%',
   },
   registrationInput: {
     paddingVertical: 8,
+    width: 270,
     marginTop: 18,
     borderRadius: 8,
     paddingLeft: 8,
