@@ -15,7 +15,6 @@ import {useDispatch} from 'react-redux';
 import {
   CafeRequest,
   FavoriteClientRequest,
-  ICafeInfo,
   ICafeRequest,
   IProductBriefInfo,
   IProductRequest,
@@ -30,23 +29,29 @@ import {HeaderComponent} from '../common/components/HeaderComponent';
 import {replaceProductsLinks} from '../common/helpers/replaceProductsLinks';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
 import {
+  addCafe,
   addDrink,
+  removeCafe,
   removeDrink,
 } from '../modules/redux/reducers/favorites/favoritesReducer';
+import {INewCafeInfo} from '../common/helpers/replaceCafeList';
 
 export const CafeDetailsScreen: React.FC = () => {
+  const image = require('../../resources/images/image_no_coffe.png');
+  const route = useRoute<RouteProp<Record<string, INewCafeInfo>, string>>();
   const navigation = useNavigation();
-  const route = useRoute<RouteProp<Record<string, ICafeInfo>, string>>();
   const dispatch = useDispatch();
   const sessionId = useTypedSelector(state => state.user.sessionId);
-  const image = require('../../resources/images/image_no_coffe.png');
+  const favoriteDrinks = useTypedSelector(state => state.favorites.drinks);
+  const cafeList = useTypedSelector(state => state.favorites.cafe);
 
   const [productsList, setProductsList] = useState<IProductBriefInfo[]>([]);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const targetCafe = cafeList.find(el => el.id === route.params.id);
 
   useEffect(() => {
     getAllProduct();
-  }, []);
+  }, [route.params.favorite]);
 
   const goBackHandler = useCallback((): void => {
     navigation.goBack();
@@ -84,6 +89,7 @@ export const CafeDetailsScreen: React.FC = () => {
         if (method === 'set') {
           const favoriteRequest: boolean | null =
             await favoriteClientRequest.set(new ProductRequest(product));
+
           if (favoriteRequest) {
             item.favorite = favoriteRequest;
             dispatch(addDrink(item));
@@ -91,6 +97,7 @@ export const CafeDetailsScreen: React.FC = () => {
         } else if (method === 'unset') {
           const favoriteRequest: boolean | null =
             await favoriteClientRequest.unset(new ProductRequest(product));
+
           if (favoriteRequest) {
             item.favorite = favoriteRequest;
             dispatch(removeDrink(item.id));
@@ -123,12 +130,23 @@ export const CafeDetailsScreen: React.FC = () => {
     [navigation],
   );
 
+  const addCafeToFavorites = useCallback((): void => {
+    if (targetCafe?.favorite) {
+      dispatch(removeCafe(route.params.id));
+    } else {
+      dispatch(addCafe(route.params));
+    }
+  }, [dispatch, route.params]);
+
   const renderProductsList = ({item}: {item: IProductBriefInfo}) => {
     return (
       <ProductsListView
         item={item}
         goToProduct={goToProduct}
         setAndUnsetFavoriteProduct={setAndUnsetFavoriteProduct}
+        favoriteDrinks={favoriteDrinks}
+        getAllProduct={getAllProduct}
+        isCafeDetailsScreen={true}
       />
     );
   };
@@ -151,6 +169,8 @@ export const CafeDetailsScreen: React.FC = () => {
               <DetailsContainer
                 name={route.params.name}
                 address={route.params.address}
+                isFavorite={targetCafe?.favorite}
+                addCafeToFavorites={addCafeToFavorites}
               />
             </ImageBackground>
           </View>

@@ -117,7 +117,9 @@ export const ProductDetailsScreen: React.FC = () => {
               ...prevState,
               favarite: favoriteRequest,
             }));
-            dispatch(addDrink(route.params));
+            const newItem = {...route.params};
+            newItem.favorite = favoriteRequest;
+            dispatch(addDrink(newItem));
           }
         } else if (method === 'unset') {
           const favoriteRequest: boolean | null =

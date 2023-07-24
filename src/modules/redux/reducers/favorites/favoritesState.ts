@@ -1,7 +1,8 @@
-import {ICafeInfo, IProductBriefInfo} from '../../../../core/api/CoffeeRequest';
+import {IProductBriefInfo} from '../../../../core/api/CoffeeRequest';
+import {INewCafeInfo} from '../../../../common/helpers/replaceCafeList';
 
 export interface IFavoritesState {
-  cafe: ICafeInfo[];
+  cafe: INewCafeInfo[];
   drinks: IProductBriefInfo[];
 }
 

@@ -3,7 +3,8 @@ import {
   favoritesAction,
   favoritesActionTypes,
 } from '../../../../types/favoritesType';
-import {ICafeInfo, IProductBriefInfo} from '../../../../core/api/CoffeeRequest';
+import {IProductBriefInfo} from '../../../../core/api/CoffeeRequest';
+import {INewCafeInfo} from '../../../../common/helpers/replaceCafeList';
 
 export const favoritesReducer = (
   state = favoritesState,
@@ -53,12 +54,12 @@ export const removeDrink = (payload: string) => ({
   payload,
 });
 
-export const addCafe = (payload: ICafeInfo) => ({
+export const addCafe = (payload: INewCafeInfo) => ({
   type: favoritesActionTypes.ADD_CAFE,
   payload,
 });
 
-export const removeCafe = (payload: string) => ({
+export const removeCafe = (payload: string | undefined) => ({
   type: favoritesActionTypes.REMOVE_CAFE,
   payload,
 });

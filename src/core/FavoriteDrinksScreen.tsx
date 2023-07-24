@@ -18,7 +18,11 @@ import {
 } from '../modules/redux/reducers/favorites/favoritesReducer';
 import {useDispatch} from 'react-redux';
 
-export const FavoriteDrinksScreen: React.FC<DrawerContentComponentProps> = ({
+interface IFavoriteDrinksScreenProps {
+  navigation: DrawerContentComponentProps['navigation'];
+}
+
+export const FavoriteDrinksScreen: React.FC<IFavoriteDrinksScreenProps> = ({
   navigation,
 }) => {
   const image = require('../../resources/images/image_no_coffe.png');

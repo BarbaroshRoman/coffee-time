@@ -1,12 +1,13 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {ICafeInfo} from '../../core/api/CoffeeRequest';
-import {COLORS} from '../../../resources/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+import {COLORS} from '../../../resources/colors';
+import {INewCafeInfo} from '../helpers/replaceCafeList';
+
 type Props = {
-  item: ICafeInfo;
-  goToCafe: (item: ICafeInfo) => void;
+  item: INewCafeInfo;
+  goToCafe: (item: INewCafeInfo) => void;
 };
 export const CafeListView = (props: Props) => {
   const {item, goToCafe} = props;

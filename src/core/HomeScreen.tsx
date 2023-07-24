@@ -9,7 +9,7 @@ import {useTypedSelector} from '../hooks/useTypedSelector';
 import {CafeListView} from '../common/components/CafeListView';
 import {COLORS} from '../../resources/colors';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
-import {replaceCafeLinks} from '../common/helpers/replaceCafeLinks';
+import {INewCafeInfo, replaceCafeList} from '../common/helpers/replaceCafeList';
 
 export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
   navigation,
@@ -18,7 +18,7 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
   const isLoading = useTypedSelector(state => state.user.loading);
   const image = require('../../resources/images/image_no_coffe.png');
 
-  const [cafeList, setCafeList] = useState<ICafeInfo[]>([]);
+  const [cafeList, setCafeList] = useState<INewCafeInfo[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -31,21 +31,21 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
     try {
       const allCafe: ICafeInfo[] | null = await cafeRequest.getAll(sessionId);
 
-      const newCafeList = replaceCafeLinks(allCafe);
+      const newCafeList: INewCafeInfo[] | undefined = replaceCafeList(allCafe);
       setCafeList(newCafeList ?? []);
     } catch {
       setErrorMessage('По вашему запросу ничего не найдено');
     }
   }, [sessionId]);
 
-  const goToCafe = (item: ICafeInfo): void => {
+  const goToCafe = (item: INewCafeInfo): void => {
     navigation.navigate(
       navigationHomePages.cafeDetails as never,
       item as never,
     );
   };
 
-  const renderCafeList = ({item}: {item: ICafeInfo}) => {
+  const renderCafeList = ({item}: {item: INewCafeInfo}) => {
     return <CafeListView item={item} goToCafe={goToCafe} />;
   };
   const openDrawer = (): void => {

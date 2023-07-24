@@ -1,4 +1,5 @@
-import {ICafeInfo, IProductBriefInfo} from '../core/api/CoffeeRequest';
+import {IProductBriefInfo} from '../core/api/CoffeeRequest';
+import {INewCafeInfo} from '../common/helpers/replaceCafeList';
 
 export enum favoritesActionTypes {
   ADD_DRINK = 'ADD_DRINK',
@@ -19,7 +20,7 @@ interface IRemoveDrinkAction {
 
 interface IAddCafeAction {
   type: favoritesActionTypes.ADD_CAFE;
-  payload: ICafeInfo;
+  payload: INewCafeInfo;
 }
 
 interface IRemoveCafeAction {

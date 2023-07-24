@@ -1,16 +1,34 @@
-import React from 'react';
-import {IProductBriefInfo} from '../../core/api/CoffeeRequest';
+import React, {useEffect} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {COLORS} from '../../../resources/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+
+import {IProductBriefInfo} from '../../core/api/CoffeeRequest';
+import {COLORS} from '../../../resources/colors';
 
 type Props = {
   item: IProductBriefInfo;
   goToProduct: (item: IProductBriefInfo) => void;
   setAndUnsetFavoriteProduct: (item: IProductBriefInfo, method: string) => void;
+  getAllProduct?: () => Promise<void>;
+  favoriteDrinks?: IProductBriefInfo[];
+  isCafeDetailsScreen?: boolean;
 };
 export const ProductsListView = (props: Props) => {
-  const {item, goToProduct, setAndUnsetFavoriteProduct} = props;
+  const {
+    item,
+    goToProduct,
+    setAndUnsetFavoriteProduct,
+    getAllProduct,
+    favoriteDrinks,
+    isCafeDetailsScreen,
+  } = props;
+
+  useEffect(() => {
+    const targetDrink = favoriteDrinks?.find(el => el.id === item.id);
+    if (isCafeDetailsScreen && targetDrink?.favorite !== item.favorite) {
+      getAllProduct?.();
+    }
+  }, [favoriteDrinks, isCafeDetailsScreen, item.favorite, item.id]);
 
   return (
     <TouchableOpacity

@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import React from 'react';
 
@@ -7,19 +7,30 @@ import {COLORS} from '../../../resources/colors';
 interface IProps {
   name: string;
   address: string;
+  isFavorite: boolean | undefined;
+  addCafeToFavorites: () => void;
 }
 export const DetailsContainer = (props: IProps) => {
-  const {name, address} = props;
+  const {name, address, isFavorite, addCafeToFavorites} = props;
   return (
     <View style={styles.detailsContainer}>
       <Text style={styles.cafeName}>{name}</Text>
       <View style={styles.bottomContainer}>
         <Text style={styles.cafeaddress}>{address}</Text>
-        <View style={styles.iconContainer}>
+        <TouchableOpacity
+          style={[
+            styles.iconContainer,
+            isFavorite && {alignItems: 'flex-start'},
+          ]}
+          onPress={addCafeToFavorites}>
           <View style={styles.roundFrame}>
-            <AntDesign name={'hearto'} color={COLORS.red} size={28} />
+            <AntDesign
+              name={isFavorite ? 'heart' : 'hearto'}
+              color={COLORS.red}
+              size={28}
+            />
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
