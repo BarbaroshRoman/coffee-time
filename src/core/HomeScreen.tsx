@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import {DrawerContentComponentProps} from '@react-navigation/drawer';
-import Spinner from 'react-native-spinkit';
 
 import {HeaderComponent} from '../common/components/HeaderComponent';
 import {CafeClientRequest, ICafeInfo} from './api/CoffeeRequest';
@@ -10,6 +9,8 @@ import {CafeListView} from '../common/components/CafeListView';
 import {COLORS} from '../../resources/colors';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
 import {INewCafeInfo, replaceCafeList} from '../common/helpers/replaceCafeList';
+import {MapLabelComponent} from '../common/components/MapLabelComponent';
+import {LoadingComponent} from '../common/components/LoadingComponent';
 
 export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
   navigation,
@@ -20,6 +21,7 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
 
   const [cafeList, setCafeList] = useState<INewCafeInfo[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isMap, setIsMap] = useState(false);
 
   useEffect(() => {
     getAllCafe();
@@ -45,24 +47,28 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
     );
   };
 
-  const renderCafeList = ({item}: {item: INewCafeInfo}) => {
-    return <CafeListView item={item} goToCafe={goToCafe} />;
-  };
   const openDrawer = (): void => {
     navigation.openDrawer();
   };
 
+  const changeMapLabelPosition = (): void => {
+    setIsMap(prevState => !prevState);
+  };
+
+  const renderCafeList = ({item}: {item: INewCafeInfo}) => {
+    return <CafeListView item={item} goToCafe={goToCafe} />;
+  };
+
   if (isLoading) {
-    return (
-      <View style={styles.loading}>
-        <Text style={styles.titleText}>CoffeTime</Text>
-        <Spinner type="Wave" color={COLORS.black} size={80} />
-      </View>
-    );
+    return <LoadingComponent />;
   } else {
     return (
       <View style={styles.container}>
         <HeaderComponent openDrawer={openDrawer} />
+        <MapLabelComponent
+          isMap={isMap}
+          changeMapLabelPosition={changeMapLabelPosition}
+        />
         {!cafeList.length && (
           <View style={styles.emptyListContainer}>
             <Image source={image} style={styles.coffeeImage} />
@@ -80,19 +86,6 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
 };
 
 const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '8%',
-  },
-  titleText: {
-    fontSize: 40,
-    fontFamily: 'Lobster-Regular',
-    color: COLORS.dimGray,
-    borderBottomWidth: 1,
-    borderRadius: 8,
-  },
   container: {
     flex: 1,
     backgroundColor: COLORS.white,

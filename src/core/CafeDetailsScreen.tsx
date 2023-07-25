@@ -51,7 +51,7 @@ export const CafeDetailsScreen: React.FC = () => {
 
   useEffect(() => {
     getAllProduct();
-  }, [route.params.favorite]);
+  }, []);
 
   const goBackHandler = useCallback((): void => {
     navigation.goBack();
@@ -136,7 +136,7 @@ export const CafeDetailsScreen: React.FC = () => {
     } else {
       dispatch(addCafe(route.params));
     }
-  }, [dispatch, route.params]);
+  }, [dispatch, route.params, targetCafe?.favorite]);
 
   const renderProductsList = ({item}: {item: IProductBriefInfo}) => {
     return (

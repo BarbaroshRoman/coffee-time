@@ -26,10 +26,12 @@ export const favoritesReducer = (
         cafe: state.cafe,
       };
     case favoritesActionTypes.ADD_CAFE:
+      const updateCafe = {...action.payload};
+      updateCafe.favorite = true;
       return {
         ...state,
         drinks: state.drinks,
-        cafe: [...state.cafe, action.payload],
+        cafe: [...state.cafe, updateCafe],
       };
     case favoritesActionTypes.REMOVE_CAFE:
       const cafeId = action.payload;

@@ -5,7 +5,6 @@ import {
   Dimensions,
   ImageBackground,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,7 +12,6 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import ImagePicker from 'react-native-image-crop-picker';
-import Spinner from 'react-native-spinkit';
 
 import {COLORS} from '../../resources/colors';
 import {RegistrationTitle} from '../common/components/RegistrationTitle';
@@ -33,6 +31,7 @@ import {
 } from './api/CoffeeRequest';
 import {navigationStacks} from '../navigation/components/navigationStacks';
 import {useTypedSelector} from '../hooks/useTypedSelector';
+import {LoadingComponent} from '../common/components/LoadingComponent';
 
 export const MAIN_MENU = 'MAIN_MENU';
 export const REGISTRATION = 'REGISTRATION';
@@ -259,12 +258,7 @@ export const RegistrationScreen: React.FC = () => {
     loading &&
     (choiceToEnter === AUTHORIZATION || choiceToEnter === USERDATA)
   ) {
-    return (
-      <View style={styles.authorizationLoading}>
-        <Text style={styles.titleText}>CoffeTime</Text>
-        <Spinner type="Wave" color={COLORS.black} size={80} />
-      </View>
-    );
+    return <LoadingComponent />;
   } else {
     return (
       <View style={styles.container}>
@@ -308,19 +302,6 @@ export const RegistrationScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  authorizationLoading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '8%',
-  },
-  titleText: {
-    fontSize: 40,
-    fontFamily: 'Lobster-Regular',
-    color: COLORS.dimGray,
-    borderBottomWidth: 1,
-    borderRadius: 8,
-  },
   container: {
     flex: 1,
   },
