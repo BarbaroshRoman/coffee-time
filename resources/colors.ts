@@ -15,6 +15,7 @@ export type Colors = {
   ghostWhite: string;
   asparagus: string;
   slateGray: string;
+  transparent: string;
 };
 
 export const COLORS: Colors = {
@@ -34,4 +35,5 @@ export const COLORS: Colors = {
   ghostWhite: '#bfbfbf',
   asparagus: '#a0be74',
   slateGray: '#5e5e5e',
+  transparent: 'transparent',
 };

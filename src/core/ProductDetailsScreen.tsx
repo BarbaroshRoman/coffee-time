@@ -155,7 +155,7 @@ export const ProductDetailsScreen: React.FC = () => {
       <HeaderComponent isGoBack={true} goBackHandler={goBackHandler} />
       {Object.keys(productInfo).length !== 0 ? (
         <>
-          <View style={styles.label}>
+          <View style={styles.shopHitLabel}>
             <Text style={styles.shopHitText}>хит</Text>
             <View style={styles.sharpenedBox} />
           </View>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     alignItems: 'center',
   },
-  label: {
+  shopHitLabel: {
     flexDirection: 'row',
     width: 80,
     height: 50,

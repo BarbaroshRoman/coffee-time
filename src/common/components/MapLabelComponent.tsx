@@ -10,11 +10,13 @@ interface IProps {
 export const MapLabelComponent = (props: IProps) => {
   const {isMap, changeMapLabelPosition} = props;
   return (
-    <TouchableOpacity style={styles.mapLabel} onPress={changeMapLabelPosition}>
+    <TouchableOpacity
+      style={[styles.mapLabel, isMap && {borderColor: COLORS.white}]}
+      onPress={changeMapLabelPosition}>
       <View
         style={[
           styles.menuOutlineContainer,
-          !isMap && {backgroundColor: COLORS.white},
+          !isMap && {backgroundColor: COLORS.transparent},
         ]}>
         <Ionicons
           name={'location-outline'}
@@ -25,9 +27,13 @@ export const MapLabelComponent = (props: IProps) => {
       <View
         style={[
           styles.menuOutlineContainer,
-          isMap && {backgroundColor: COLORS.white},
+          isMap && {backgroundColor: COLORS.transparent},
         ]}>
-        <Ionicons name={'menu-outline'} color={COLORS.slateGray} size={24} />
+        <Ionicons
+          name={'menu-outline'}
+          color={isMap ? COLORS.white : COLORS.slateGray}
+          size={24}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -35,13 +41,14 @@ export const MapLabelComponent = (props: IProps) => {
 
 const styles = StyleSheet.create({
   mapLabel: {
+    position: 'absolute',
     flexDirection: 'row',
+    marginTop: 70,
     width: 126,
     height: 32,
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'center',
-    marginVertical: 14,
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 2,
