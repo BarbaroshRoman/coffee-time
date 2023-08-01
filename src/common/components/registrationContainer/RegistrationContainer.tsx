@@ -23,13 +23,13 @@ type Props = {
   setPasswordConfirmation: React.Dispatch<React.SetStateAction<string>>;
   errorMessage: string;
   backMainMenu: () => void;
-  registrationUser: () => void;
-  authorizationUser: () => void;
+  handleRegistrationUser: () => Promise<void>;
+  handleAuthorizationUser: () => Promise<void>;
   goToPickImage: () => void;
   avatar: string;
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
-  loading: boolean;
+  isRegLoading: boolean;
   additionalRegistration: () => void;
   isVisible: IVisiblePassword;
   setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
@@ -47,13 +47,13 @@ export const RegistrationContainer = (props: Props) => {
     backMainMenu,
     passwordConfirmation,
     setPasswordConfirmation,
-    registrationUser,
-    authorizationUser,
+    handleRegistrationUser,
+    handleAuthorizationUser,
     goToPickImage,
     avatar,
     username,
     setUsername,
-    loading,
+    isRegLoading,
     additionalRegistration,
     isVisible,
     setIsVisible,
@@ -70,7 +70,7 @@ export const RegistrationContainer = (props: Props) => {
           confirmation={'Авторизоваться'}
           errorMessage={errorMessage}
           backMainMenu={backMainMenu}
-          authorizationUser={authorizationUser}
+          handleAuthorizationUser={handleAuthorizationUser}
           isVisible={isVisible}
           setIsVisible={setIsVisible}
         />
@@ -79,7 +79,7 @@ export const RegistrationContainer = (props: Props) => {
       return (
         <LoginMethod
           isRegistration={true}
-          registrationUser={registrationUser}
+          handleRegistrationUser={handleRegistrationUser}
           email={email}
           setEmail={setEmail}
           password={password}
@@ -89,7 +89,7 @@ export const RegistrationContainer = (props: Props) => {
           backMainMenu={backMainMenu}
           passwordConfirmation={passwordConfirmation}
           setPasswordConfirmation={setPasswordConfirmation}
-          loading={loading}
+          isRegLoading={isRegLoading}
           isVisible={isVisible}
           setIsVisible={setIsVisible}
         />

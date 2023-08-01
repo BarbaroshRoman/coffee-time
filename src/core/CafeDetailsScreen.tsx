@@ -33,7 +33,7 @@ import {
   addDrink,
   removeCafe,
   removeDrink,
-} from '../modules/redux/reducers/favorites/favoritesReducer';
+} from '../modules/redux/favorites/favoritesReducer';
 import {INewCafeInfo} from '../common/helpers/replaceCafeList';
 
 export const CafeDetailsScreen: React.FC = () => {

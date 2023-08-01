@@ -15,7 +15,7 @@ import {navigationHomePages} from '../navigation/components/navigationHomePages'
 import {
   addDrink,
   removeDrink,
-} from '../modules/redux/reducers/favorites/favoritesReducer';
+} from '../modules/redux/favorites/favoritesReducer';
 import {useDispatch} from 'react-redux';
 
 interface IFavoriteDrinksScreenProps {

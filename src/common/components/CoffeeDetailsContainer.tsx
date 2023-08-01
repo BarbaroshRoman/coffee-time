@@ -1,7 +1,8 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {IAttributeInfo} from '../../core/api/CoffeeRequest';
 import React from 'react';
+import {Image, StyleSheet, Text, View} from 'react-native';
+
 import {COLORS} from '../../../resources/colors';
+import {IAttributeInfo} from '../../types/productRequestType';
 
 type Props = {
   attribute: IAttributeInfo[];

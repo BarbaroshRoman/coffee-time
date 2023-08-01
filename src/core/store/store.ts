@@ -3,7 +3,8 @@ import {persistReducer, persistStore} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createLogger} from 'redux-logger';
 
-import {rootReducer} from '../../modules/redux/reducers/rootReducer';
+import {rootReducer} from './rootReducer';
+import {userRequest} from '../api/userRequest';
 
 const options = {
   diff: true,
@@ -26,7 +27,7 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(logger),
+    }).concat(userRequest.middleware, logger),
 });
 
 export const persistor = persistStore(store);

@@ -5,8 +5,6 @@ export interface IUserState {
   avatar: string;
   userName: string;
   isLogined: boolean;
-  loading: boolean;
-  error: null | string;
 }
 
 export const userState: IUserState = {
@@ -16,6 +14,4 @@ export const userState: IUserState = {
   avatar: '',
   userName: '',
   isLogined: false,
-  loading: false,
-  error: null,
 };

@@ -11,17 +11,9 @@ import {
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 
-import {
-  FavoriteClientRequest,
-  IProductBriefInfo,
-  IProductFullInfo,
-  IProductRequest,
-  ProductClientRequest,
-  ProductRequest,
-} from './api/CoffeeRequest';
+import {IProductBriefInfo} from './api/CoffeeRequest';
 import {HeaderComponent} from '../common/components/HeaderComponent';
 import {COLORS} from '../../resources/colors';
-import {replaceLinksForProductScreen} from '../common/helpers/replaceLinksForProductScreen';
 import {PopUpNotification} from '../common/components/PopUpNotification';
 import {ProductNameContainer} from '../common/components/ProductNameContainer';
 import {CoffeeDetailsContainer} from '../common/components/CoffeeDetailsContainer';
@@ -29,8 +21,11 @@ import {OrderCoffeeContainer} from '../common/components/OrderCoffeeContainer';
 import {
   addDrink,
   removeDrink,
-} from '../modules/redux/reducers/favorites/favoritesReducer';
+} from '../modules/redux/favorites/favoritesReducer';
 import {useTypedSelector} from '../hooks/useTypedSelector';
+import {IProductFullInfo, IProductRequest} from '../types/productRequestType';
+import {useGetProductMutation} from './api/productRequest';
+import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
 
 export const ProductDetailsScreen: React.FC = () => {
   const route =
@@ -48,9 +43,10 @@ export const ProductDetailsScreen: React.FC = () => {
     temperature: require('../../resources/images/temperature.png'),
     pressure: require('../../resources/images/pressure.png'),
   };
-
+  const [productRequest] = useGetProductMutation();
+  const [setFavorite] = useSetMutation();
+  const [unsetFavorite] = useUnsetMutation();
   const [productInfo, setProductInfo] = useState<IProductFullInfo | {}>({});
-  const [errorMessage, setErrorMessage] = useState('');
 
   const {productName, price, attribute, imagesPath, favarite} =
     productInfo as IProductFullInfo;
@@ -60,26 +56,79 @@ export const ProductDetailsScreen: React.FC = () => {
   }, []);
 
   const getProduct = useCallback(async (): Promise<void> => {
-    const productRequest = new ProductClientRequest();
     const item: IProductRequest = {
       sessionId: sessionId,
       productId: route.params.id,
     };
-
-    try {
-      const product: IProductFullInfo | null = await productRequest.getProduct(
-        new ProductRequest(item),
-      );
-      const newProduct = replaceLinksForProductScreen(product);
-      setProductInfo(newProduct ?? {});
-    } catch {
-      setErrorMessage('Не удалось получить данные');
-    }
-  }, [route.params.id, sessionId]);
+    await productRequest(item)
+      .unwrap()
+      .then(response => {
+        setProductInfo(response ?? {});
+      });
+  }, [productRequest, route.params.id, sessionId]);
 
   const goBackHandler = useCallback((): void => {
     navigation.goBack();
   }, [navigation]);
+
+  const setFavoriteProduct = useCallback(
+    async (product: IProductRequest): Promise<void> => {
+      await setFavorite(product)
+        .unwrap()
+        .then(response => {
+          setProductInfo(prevState => ({
+            ...prevState,
+            favarite: response,
+          }));
+          const newItem = {...route.params};
+          newItem.favorite = response ?? newItem.favorite;
+          dispatch(addDrink(newItem));
+        })
+        .catch(() => {
+          showError('Не удалось сохранить в список избранных');
+        })
+        .finally(() => {
+          getProduct();
+        });
+    },
+    [dispatch, route.params, setFavorite],
+  );
+
+  const unsetFavoriteProduct = useCallback(
+    async (product: IProductRequest): Promise<void> => {
+      await unsetFavorite(product)
+        .unwrap()
+        .then(response => {
+          setProductInfo(prevState => ({
+            ...prevState,
+            favarite: response,
+          }));
+          dispatch(removeDrink(route.params.id));
+        })
+        .catch(() => {
+          showError('Не удалось убрать из списка избранных');
+        })
+        .finally(() => {
+          getProduct();
+        });
+    },
+    [dispatch, route.params.id, unsetFavorite],
+  );
+
+  const setAndUnsetFavoriteProduct = useCallback(
+    (method: string): void => {
+      const product: IProductRequest = {
+        sessionId: sessionId,
+        productId: route.params.id,
+      };
+      if (method === 'set') {
+        setFavoriteProduct(product);
+      } else if (method === 'unset') {
+        unsetFavoriteProduct(product);
+      }
+    },
+    [route.params.id, sessionId],
+  );
 
   const popIn = (): any => {
     Animated.timing(popAnim, {
@@ -98,49 +147,6 @@ export const ProductDetailsScreen: React.FC = () => {
       }).start();
     }, 2000);
   };
-
-  const setAndUnsetFavoriteProduct = useCallback(
-    async (method: string): Promise<void> => {
-      const favoriteClientRequest = new FavoriteClientRequest();
-      const product: IProductRequest = {
-        sessionId: sessionId,
-        productId: route.params.id,
-      };
-
-      try {
-        if (method === 'set') {
-          const favoriteRequest: boolean | null =
-            await favoriteClientRequest.set(new ProductRequest(product));
-
-          if (favoriteRequest) {
-            setProductInfo(prevState => ({
-              ...prevState,
-              favarite: favoriteRequest,
-            }));
-            const newItem = {...route.params};
-            newItem.favorite = favoriteRequest;
-            dispatch(addDrink(newItem));
-          }
-        } else if (method === 'unset') {
-          const favoriteRequest: boolean | null =
-            await favoriteClientRequest.unset(new ProductRequest(product));
-
-          if (favoriteRequest) {
-            setProductInfo(prevState => ({
-              ...prevState,
-              favarite: favoriteRequest,
-            }));
-            dispatch(removeDrink(route.params.id));
-          }
-        }
-      } catch {
-        showError('Не удалось сохранить в список избранных');
-      } finally {
-        getProduct();
-      }
-    },
-    [dispatch, route.params, sessionId],
-  );
 
   const showError = (errorMes: string): void => {
     Alert.alert('Ошибка', errorMes, [
@@ -177,7 +183,7 @@ export const ProductDetailsScreen: React.FC = () => {
       ) : (
         <View style={styles.emptyListContainer}>
           <Image source={imageNoCoffee} style={styles.coffeeImage} />
-          <Text style={styles.errorText}>{errorMessage}</Text>
+          <Text style={styles.errorText}>Не удалось получить данные</Text>
         </View>
       )}
     </View>

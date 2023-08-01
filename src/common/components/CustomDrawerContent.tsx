@@ -16,11 +16,8 @@ import {useDispatch} from 'react-redux';
 
 import {useTypedSelector} from '../../hooks/useTypedSelector';
 import {COLORS} from '../../../resources/colors';
-import {
-  userLogOut,
-  userPending,
-} from '../../modules/redux/reducers/user/userReducer';
 import {navigationStacks} from '../../navigation/components/navigationStacks';
+import {userLogout} from '../../modules/redux/user/userReducer';
 
 export const CustomDrawerContent: React.FC<
   DrawerContentComponentProps
@@ -32,11 +29,8 @@ export const CustomDrawerContent: React.FC<
 
   const logOutHelper = useCallback((): void => {
     navigation.closeDrawer();
-    dispatch(userPending());
-    setTimeout(() => {
-      dispatch(userLogOut());
-      navigation.navigate(navigationStacks.registration as never);
-    }, 4000);
+    dispatch(userLogout());
+    navigation.navigate(navigationStacks.registration as never);
   }, [dispatch, navigation]);
 
   const logOut = () =>

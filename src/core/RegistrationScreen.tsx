@@ -17,21 +17,14 @@ import {COLORS} from '../../resources/colors';
 import {RegistrationTitle} from '../common/components/RegistrationTitle';
 import {RegistrationContainer} from '../common/components/registrationContainer/RegistrationContainer';
 import {
-  registrationUserError,
-  userPending,
-  registrationUserSuccess,
+  registrationUser,
   saveUserData,
-  authorizationUserSuccess,
-  authorizationUserError,
-} from '../modules/redux/reducers/user/userReducer';
-import {
-  IUserRequest,
-  UserClientRequest,
-  UserRequest,
-} from './api/CoffeeRequest';
+} from '../modules/redux/user/userReducer';
 import {navigationStacks} from '../navigation/components/navigationStacks';
-import {useTypedSelector} from '../hooks/useTypedSelector';
 import {LoadingComponent} from '../common/components/LoadingComponent';
+import {useAuthorizationMutation, useRegisterMutation} from './api/userRequest';
+import {IUserRequest} from '../types/userRequestType';
+import {IUserSuccessPayload} from '../types/userType';
 
 export const MAIN_MENU = 'MAIN_MENU';
 export const REGISTRATION = 'REGISTRATION';
@@ -49,8 +42,10 @@ export const RegistrationScreen: React.FC = () => {
   const isFocus = useIsFocused();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const error = useTypedSelector(state => state.user.error);
-  const loading = useTypedSelector(state => state.user.loading);
+  const [registrationRequest, {isLoading: isRegLoading}] =
+    useRegisterMutation();
+  const [authorizationRequest, {isLoading: isAuthLoading}] =
+    useAuthorizationMutation();
 
   const [choiceToEnter, setChoiceToEnter] = useState('main menu');
   const [email, setEmail] = useState('');
@@ -59,6 +54,7 @@ export const RegistrationScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [avatar, setAvatar] = useState('');
   const [username, setUsername] = useState('');
+  const [isAdditionalLoad, setIsAdditionalLoad] = useState(false);
   const [isVisible, setIsVisible] = useState<IVisiblePassword>({
     password: true,
     passwordConfirmation: true,
@@ -77,12 +73,6 @@ export const RegistrationScreen: React.FC = () => {
   }, [isFocus]);
 
   useEffect(() => {
-    if (error) {
-      showError(error);
-    }
-  }, [error]);
-
-  useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1000,
@@ -91,10 +81,10 @@ export const RegistrationScreen: React.FC = () => {
   }, [fadeAnim]);
 
   const registrationMailHandler = useCallback((): string => {
-    if (
-      (email.length > 9 && email.toLowerCase().includes('@mail.ru')) ||
-      (email.length > 9 && email.toLowerCase().includes('@gmail.com'))
-    ) {
+    const firstCheck = email.toLowerCase().includes('@');
+    const secondCheck = email.toLowerCase().includes('.');
+
+    if (firstCheck && secondCheck && email.length > 5) {
       return '';
     }
     return 'Введите свой email';
@@ -151,42 +141,37 @@ export const RegistrationScreen: React.FC = () => {
     setIsVisible({password: true, passwordConfirmation: true});
   };
 
-  const registrationUser = useCallback(async (): Promise<void> => {
+  const handleRegistrationUser = useCallback(async (): Promise<void> => {
     const isErrorsHandled = registrationErrorHandler();
     if (isErrorsHandled) {
-      const userRequest = new UserClientRequest();
-      const item = {
+      const item: IUserRequest = {
         email: email,
         password: password,
       };
-
-      try {
-        dispatch(userPending());
-        const sessionId = await userRequest.register(new UserRequest(item));
-        setTimeout(() => {
-          dispatch(
-            registrationUserSuccess({
-              sessionId: sessionId,
-              email: email,
-              password: password,
-              isLogined: true,
-            }),
-          );
+      await registrationRequest(item)
+        .unwrap()
+        .then(sessionId => {
+          const payload: IUserSuccessPayload = {
+            sessionId: sessionId,
+            email: email,
+            password: password,
+            isLogined: true,
+          };
+          dispatch(registrationUser(payload));
           setChoiceToEnter(USERDATA);
-        }, 2000);
-      } catch {
-        setTimeout(() => {
-          dispatch(registrationUserError('Ошибка регистрации'));
-        }, 2000);
-      } finally {
-        setUsername('');
-      }
+        })
+        .catch(() => {
+          showError('Ошибка регистрации');
+        })
+        .finally(() => {
+          setUsername('');
+        });
     }
-  }, [dispatch, email, password, passwordConfirmation]);
+  }, [dispatch, email, password, passwordConfirmation, registrationRequest]);
 
   const additionalRegistration = useCallback((): void => {
     if (username) {
-      dispatch(userPending());
+      setIsAdditionalLoad(true);
       setTimeout(() => {
         dispatch(
           saveUserData({
@@ -194,47 +179,40 @@ export const RegistrationScreen: React.FC = () => {
             userName: username,
           }),
         );
+        setIsAdditionalLoad(false);
         navigation.navigate(navigationStacks.home as never);
         backMainMenu();
-      }, 5000);
+      }, 2000);
     } else {
       setErrorMessage('Поле не должно быть пустым');
     }
   }, [avatar, dispatch, navigation, username]);
 
-  const authorizationUser = useCallback(async (): Promise<void> => {
-    const isErrorsHandled = authorizationErrorHandler() ?? false;
+  const handleAuthorizationUser = useCallback(async (): Promise<void> => {
+    const isErrorsHandled = authorizationErrorHandler();
     if (isErrorsHandled) {
-      const userRequest = new UserClientRequest();
       const item: IUserRequest = {
         email: email,
         password: password,
       };
-
-      try {
-        dispatch(userPending());
-        const sessionId = await userRequest.authorization(
-          new UserRequest(item),
-        );
-        setTimeout(() => {
-          dispatch(
-            authorizationUserSuccess({
-              sessionId: sessionId,
-              email: email,
-              password: password,
-              isLogined: true,
-            }),
-          );
+      await authorizationRequest(item)
+        .unwrap()
+        .then(sessionId => {
+          const payload: IUserSuccessPayload = {
+            sessionId: sessionId,
+            email: email,
+            password: password,
+            isLogined: true,
+          };
+          dispatch(registrationUser(payload));
           navigation.navigate(navigationStacks.home as never);
           backMainMenu();
-        }, 5000);
-      } catch {
-        setTimeout(() => {
-          dispatch(authorizationUserError('Неверно введен email и/или пароль'));
-        }, 2000);
-      }
+        })
+        .catch(() => {
+          showError('Неверно введен email и/или пароль');
+        });
     }
-  }, [dispatch, email, navigation, password]);
+  }, [authorizationRequest, dispatch, email, navigation, password]);
 
   const showError = (errorMes: string): void => {
     Alert.alert('Ошибка', errorMes, [
@@ -255,7 +233,7 @@ export const RegistrationScreen: React.FC = () => {
   };
 
   if (
-    loading &&
+    (isAdditionalLoad || isAuthLoading) &&
     (choiceToEnter === AUTHORIZATION || choiceToEnter === USERDATA)
   ) {
     return <LoadingComponent />;
@@ -284,13 +262,13 @@ export const RegistrationScreen: React.FC = () => {
             setPasswordConfirmation={setPasswordConfirmation}
             errorMessage={errorMessage}
             backMainMenu={backMainMenu}
-            registrationUser={registrationUser}
-            authorizationUser={authorizationUser}
+            handleRegistrationUser={handleRegistrationUser}
+            handleAuthorizationUser={handleAuthorizationUser}
             goToPickImage={goToPickImage}
             avatar={avatar}
             username={username}
             setUsername={setUsername}
-            loading={loading}
+            isRegLoading={isRegLoading}
             additionalRegistration={additionalRegistration}
             isVisible={isVisible}
             setIsVisible={setIsVisible}

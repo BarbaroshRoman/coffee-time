@@ -75,7 +75,9 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
-
+afterEvaluate {
+        tasks.getByName("lintVitalAnalyzeRelease").dependsOn(":app:copyReactNativeVectorIconFonts")
+    }
     namespace "com.coffee_time"
     defaultConfig {
         applicationId "com.coffee_time"

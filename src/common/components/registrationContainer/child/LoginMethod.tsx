@@ -14,8 +14,8 @@ import {InputContainer} from '../../InputContainer';
 
 type Props = {
   isRegistration?: boolean;
-  registrationUser?: () => void;
-  authorizationUser?: () => void;
+  handleRegistrationUser?: () => Promise<void>;
+  handleAuthorizationUser?: () => Promise<void>;
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   password: string;
@@ -25,7 +25,7 @@ type Props = {
   confirmation: string;
   errorMessage: string;
   backMainMenu: () => void;
-  loading?: boolean;
+  isRegLoading?: boolean;
   isVisible: IVisiblePassword;
   setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
 };
@@ -41,14 +41,14 @@ export const LoginMethod = (props: Props) => {
     isRegistration,
     passwordConfirmation,
     setPasswordConfirmation,
-    loading,
-    authorizationUser,
-    registrationUser,
+    isRegLoading,
+    handleAuthorizationUser,
+    handleRegistrationUser,
     isVisible,
     setIsVisible,
   } = props;
 
-  if (loading && isRegistration) {
+  if (isRegLoading && isRegistration) {
     return (
       <View style={styles.registrationLoading}>
         <Spinner type="Wave" color={COLORS.white} size={80} />
@@ -84,7 +84,9 @@ export const LoginMethod = (props: Props) => {
         <Text style={styles.errorHandlerText}>{errorMessage}</Text>
         <TouchableOpacity
           style={styles.confirmationButton}
-          onPress={isRegistration ? registrationUser : authorizationUser}>
+          onPress={
+            isRegistration ? handleRegistrationUser : handleAuthorizationUser
+          }>
           <Text style={styles.registrationButtonText}>{confirmation}</Text>
         </TouchableOpacity>
         <TouchableOpacity
