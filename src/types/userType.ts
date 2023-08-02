@@ -5,12 +5,12 @@ export interface IUserSuccessPayload {
   isLogined: boolean;
 }
 
-export interface IUserDataPayload {
+interface IUserDataPayload {
   userName: string;
   avatar: string;
 }
 
-export interface IUserSuccessAction {
+export interface IUserRegistrationAction {
   payload: IUserSuccessPayload;
 }
 

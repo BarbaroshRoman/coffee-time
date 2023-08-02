@@ -17,6 +17,7 @@ import {
   removeDrink,
 } from '../modules/redux/favorites/favoritesReducer';
 import {useDispatch} from 'react-redux';
+import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
 
 interface IFavoriteDrinksScreenProps {
   navigation: DrawerContentComponentProps['navigation'];
@@ -29,6 +30,8 @@ export const FavoriteDrinksScreen: React.FC<IFavoriteDrinksScreenProps> = ({
   const drinks = useTypedSelector(state => state.favorites.drinks);
   const sessionId = useTypedSelector(state => state.user.sessionId);
   const dispatch = useDispatch();
+  const [setFavorite] = useSetMutation();
+  const [unsetFavorite] = useUnsetMutation();
 
   const openDrawer = (): void => {
     navigation.openDrawer();
@@ -46,33 +49,49 @@ export const FavoriteDrinksScreen: React.FC<IFavoriteDrinksScreenProps> = ({
 
   const setAndUnsetFavoriteProduct = useCallback(
     async (item: IProductBriefInfo, method: string): Promise<void> => {
-      const favoriteClientRequest = new FavoriteClientRequest();
       const product: IProductRequest = {
         sessionId: sessionId,
         productId: item.id,
       };
-      try {
-        if (method === 'set') {
-          const favoriteRequest: boolean | null =
-            await favoriteClientRequest.set(new ProductRequest(product));
-          if (favoriteRequest) {
-            item.favorite = favoriteRequest;
-            dispatch(addDrink(item));
-          }
-        } else if (method === 'unset') {
-          const favoriteRequest: boolean | null =
-            await favoriteClientRequest.unset(new ProductRequest(product));
-          if (favoriteRequest) {
-            item.favorite = favoriteRequest;
-            dispatch(removeDrink(item.id));
-          }
-        }
-      } catch {
-        showError('Попробуйте позже');
+      if (method === 'set') {
+        await setFavorite(product).unwrap().then(response => {
+          item.favorite = response;
+          dispatch(addDrink(item)); // todo проверить типы addDrink в редюсере
+        })
       }
     },
-    [dispatch, sessionId],
+    [],
   );
+
+  // const setAndUnsetFavoriteProduct = useCallback(
+  //   async (item: IProductBriefInfo, method: string): Promise<void> => {
+  //     const favoriteClientRequest = new FavoriteClientRequest();
+  //     const product: IProductRequest = {
+  //       sessionId: sessionId,
+  //       productId: item.id,
+  //     };
+  //     try {
+  //       if (method === 'set') {
+  //         const favoriteRequest: boolean | null =
+  //           await favoriteClientRequest.set(new ProductRequest(product));
+  //         if (favoriteRequest) {
+  //           item.favorite = favoriteRequest;
+  //           dispatch(addDrink(item));
+  //         }
+  //       } else if (method === 'unset') {
+  //         const favoriteRequest: boolean | null =
+  //           await favoriteClientRequest.unset(new ProductRequest(product));
+  //         if (favoriteRequest) {
+  //           item.favorite = favoriteRequest;
+  //           dispatch(removeDrink(item.id));
+  //         }
+  //       }
+  //     } catch {
+  //       showError('Попробуйте позже');
+  //     }
+  //   },
+  //   [dispatch, sessionId],
+  // );
 
   const showError = (errorMes: string): void => {
     Alert.alert('Ошибка', errorMes, [

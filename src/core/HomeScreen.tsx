@@ -3,26 +3,26 @@ import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import {DrawerContentComponentProps} from '@react-navigation/drawer';
 
 import {HeaderComponent} from '../common/components/HeaderComponent';
-import {CafeClientRequest, ICafeInfo} from './api/CoffeeRequest';
 import {useTypedSelector} from '../hooks/useTypedSelector';
 import {CafeListView} from '../common/components/CafeListView';
 import {COLORS} from '../../resources/colors';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
-import {INewCafeInfo, replaceCafeList} from '../common/helpers/replaceCafeList';
+import {INewCafeInfo} from '../common/helpers/replaceCafeList';
 import {MapLabelComponent} from '../common/components/MapLabelComponent';
 import {LoadingComponent} from '../common/components/LoadingComponent';
 import {IconCafeComponent} from '../common/components/IconCafeComponent';
 import {MapComponent} from '../common/components/MapComponent';
+import {useGetAllCafeMutation} from './api/cafeRequest';
 
 export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
   navigation,
 }) => {
   const sessionId = useTypedSelector(state => state.user.sessionId);
-  const isLoading = useTypedSelector(state => state.user.loading);
+  const isLoading = useTypedSelector(state => state.user.isLoading);
   const image = require('../../resources/images/image_no_coffe.png');
+  const [cafeRequest] = useGetAllCafeMutation();
 
   const [cafeList, setCafeList] = useState<INewCafeInfo[]>([]);
-  const [errorMessage, setErrorMessage] = useState('');
   const [isMap, setIsMap] = useState(false);
 
   useEffect(() => {
@@ -30,17 +30,12 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
   }, []);
 
   const getAllCafe = useCallback(async (): Promise<void> => {
-    const cafeRequest = new CafeClientRequest();
-
-    try {
-      const allCafe: ICafeInfo[] | null = await cafeRequest.getAll(sessionId);
-
-      const newCafeList: INewCafeInfo[] | undefined = replaceCafeList(allCafe);
-      setCafeList(newCafeList ?? []);
-    } catch {
-      setErrorMessage('По вашему запросу ничего не найдено');
-    }
-  }, [sessionId]);
+    await cafeRequest(sessionId)
+      .unwrap()
+      .then(response => {
+        setCafeList(response ?? []);
+      });
+  }, [cafeRequest, sessionId]);
 
   const goToCafe = (item: INewCafeInfo): void => {
     navigation.navigate(
@@ -74,7 +69,9 @@ export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
         {!cafeList.length && (
           <View style={styles.emptyListContainer}>
             <Image source={image} style={styles.coffeeImage} />
-            <Text style={styles.errorText}>{errorMessage}</Text>
+            <Text style={styles.errorText}>
+              По вашему запросу ничего не найдено
+            </Text>
           </View>
         )}
         {isMap ? (

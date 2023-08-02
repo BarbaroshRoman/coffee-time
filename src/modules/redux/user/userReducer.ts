@@ -1,13 +1,19 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 import {userState} from './userState';
-import {IUserDataAction, IUserSuccessAction} from '../../../types/userType';
+import {
+  IUserDataAction,
+  IUserRegistrationAction,
+} from '../../../types/userType';
 
 const userSlice = createSlice({
   name: 'User',
   initialState: userState,
   reducers: {
-    registrationUser(state, action: IUserSuccessAction) {
+    loadingUser(state) {
+      state.isLoading = true;
+    },
+    registrationUser(state, action: IUserRegistrationAction) {
       state.sessionId = action.payload.sessionId;
       state.email = action.payload.email;
       state.password = action.payload.password;
@@ -24,10 +30,12 @@ const userSlice = createSlice({
       state.userName = '';
       state.avatar = '';
       state.isLogined = false;
+      state.isLoading = false;
     },
   },
 });
 
-export const {registrationUser, saveUserData, userLogout} = userSlice.actions;
+export const {loadingUser, registrationUser, saveUserData, userLogout} =
+  userSlice.actions;
 
 export const {reducer: userReducer} = userSlice;

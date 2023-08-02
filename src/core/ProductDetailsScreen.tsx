@@ -80,7 +80,7 @@ export const ProductDetailsScreen: React.FC = () => {
             ...prevState,
             favarite: response,
           }));
-          const newItem = {...route.params};
+          const newItem: IProductBriefInfo = {...route.params};
           newItem.favorite = response ?? newItem.favorite;
           dispatch(addDrink(newItem));
         })

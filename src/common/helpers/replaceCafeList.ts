@@ -1,4 +1,4 @@
-import {ICafeInfo} from '../../core/api/CoffeeRequest';
+import {ICafeInfo} from '../../types/cafeRequestType';
 
 const oldLinks = [
   'http://lovecafedecafe.com/templates/beez_20/logo0001.jpg',

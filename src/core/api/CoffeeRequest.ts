@@ -120,62 +120,6 @@ export class ProductClientRequest extends BaseRequest {
   }
 }
 
-export class CafeInfo implements ICafeInfo {
-  id?: string | undefined;
-  name: string;
-  address: string;
-  coordinates: string;
-  description: string;
-  images?: string | undefined;
-
-  constructor(data?: ICafeInfo) {
-    if (data) {
-      for (let property in data) {
-        if (data.hasOwnProperty(property)) {
-          (<any>this)[property] = (<any>data)[property];
-        }
-      }
-    }
-  }
-
-  static fromJS(data: any): CafeInfo {
-    let result = new CafeInfo();
-    result.init(data);
-    return result;
-  }
-
-  init(data?: any) {
-    if (data) {
-      this.id = data.id;
-      this.name = data.name;
-      this.address = data.address;
-      this.coordinates = data.coordinates;
-      this.description = data.description;
-      this.images = data.images;
-    }
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data.id = this.id;
-    data.name = this.name;
-    data.address = this.address;
-    data.coordinates = this.coordinates;
-    data.description = this.description;
-    data.images = this.images;
-    return data;
-  }
-}
-
-export interface ICafeInfo {
-  id?: string | undefined;
-  name: string;
-  address: string;
-  coordinates: string;
-  description: string;
-  images?: string | undefined;
-}
-
 export class CafeRequest implements ICafeRequest {
   sessionId: string;
   cafeId: string;

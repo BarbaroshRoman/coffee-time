@@ -5,6 +5,9 @@ import {createLogger} from 'redux-logger';
 
 import {rootReducer} from './rootReducer';
 import {userRequest} from '../api/userRequest';
+import {productRequest} from '../api/productRequest';
+import {favoriteRequest} from '../api/favoriteRequest';
+import { cafeRequest } from "../api/cafeRequest";
 
 const options = {
   diff: true,
@@ -27,7 +30,13 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(userRequest.middleware, logger),
+    }).concat(
+      userRequest.middleware,
+      productRequest.middleware,
+      favoriteRequest.middleware,
+      cafeRequest.middleware,
+      logger,
+    ),
 });
 
 export const persistor = persistStore(store);
