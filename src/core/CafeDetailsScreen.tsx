@@ -79,12 +79,16 @@ export const CafeDetailsScreen: React.FC = () => {
     ): Promise<void> => {
       await setFavorite(product)
         .unwrap()
-        .then(response => {
-          item.favorite = response;
-          dispatch(addDrink(item));
+        .then(() => {
+          const newItem = {...item};
+          newItem.favorite = true;
+          dispatch(addDrink(newItem));
         })
         .catch(() => {
           showError('Попробуйте позже');
+        })
+        .finally(() => {
+          getAllProduct();
         });
     },
     [dispatch, setFavorite],
@@ -97,12 +101,14 @@ export const CafeDetailsScreen: React.FC = () => {
     ): Promise<void> => {
       await unsetFavorite(product)
         .unwrap()
-        .then(response => {
-          item.favorite = response;
+        .then(() => {
           dispatch(removeDrink(item.id));
         })
         .catch(() => {
           showError('Попробуйте позже');
+        })
+        .finally(() => {
+          getAllProduct();
         });
     },
     [dispatch, unsetFavorite],

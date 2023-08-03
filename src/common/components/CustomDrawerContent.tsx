@@ -29,10 +29,11 @@ export const CustomDrawerContent: React.FC<
 
   const logOutHelper = useCallback((): void => {
     navigation.closeDrawer();
+    navigation.navigate(navigationStacks.home);
     dispatch(loadingUser());
     setTimeout(() => {
       dispatch(userLogout());
-      navigation.navigate(navigationStacks.registration as never);
+      navigation.navigate(navigationStacks.registration);
     }, 2000);
   }, [dispatch, navigation]);
 

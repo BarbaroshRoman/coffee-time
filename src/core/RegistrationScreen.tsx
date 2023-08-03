@@ -17,6 +17,7 @@ import {COLORS} from '../../resources/colors';
 import {RegistrationTitle} from '../common/components/RegistrationTitle';
 import {RegistrationContainer} from '../common/components/registrationContainer/RegistrationContainer';
 import {
+  loadingUser,
   registrationUser,
   saveUserData,
 } from '../modules/redux/user/userReducer';
@@ -24,6 +25,7 @@ import {navigationStacks} from '../navigation/components/navigationStacks';
 import {LoadingComponent} from '../common/components/LoadingComponent';
 import {useAuthorizationMutation, useRegisterMutation} from './api/userRequest';
 import {IUserRequest, IUserSuccessPayload} from '../types/userTypes';
+import {useTypedSelector} from '../hooks/useTypedSelector';
 
 export const MAIN_MENU = 'MAIN_MENU';
 export const REGISTRATION = 'REGISTRATION';
@@ -41,10 +43,9 @@ export const RegistrationScreen: React.FC = () => {
   const isFocus = useIsFocused();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [registrationRequest, {isLoading: isRegLoading}] =
-    useRegisterMutation();
-  const [authorizationRequest, {isLoading: isAuthLoading}] =
-    useAuthorizationMutation();
+  const isLoading = useTypedSelector(state => state.user.isLoading);
+  const [registrationRequest] = useRegisterMutation();
+  const [authorizationRequest] = useAuthorizationMutation();
 
   const [choiceToEnter, setChoiceToEnter] = useState('main menu');
   const [email, setEmail] = useState('');
@@ -53,7 +54,6 @@ export const RegistrationScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [avatar, setAvatar] = useState('');
   const [username, setUsername] = useState('');
-  const [isAdditionalLoad, setIsAdditionalLoad] = useState(false);
   const [isVisible, setIsVisible] = useState<IVisiblePassword>({
     password: true,
     passwordConfirmation: true,
@@ -156,8 +156,11 @@ export const RegistrationScreen: React.FC = () => {
             password: password,
             isLogined: true,
           };
-          dispatch(registrationUser(payload));
-          setChoiceToEnter(USERDATA);
+          dispatch(loadingUser());
+          setTimeout(() => {
+            dispatch(registrationUser(payload));
+            setChoiceToEnter(USERDATA);
+          }, 2000);
         })
         .catch(() => {
           showError('Ошибка регистрации');
@@ -170,7 +173,7 @@ export const RegistrationScreen: React.FC = () => {
 
   const additionalRegistration = useCallback((): void => {
     if (username) {
-      setIsAdditionalLoad(true);
+      dispatch(loadingUser());
       setTimeout(() => {
         dispatch(
           saveUserData({
@@ -178,7 +181,6 @@ export const RegistrationScreen: React.FC = () => {
             userName: username,
           }),
         );
-        setIsAdditionalLoad(false);
         navigation.navigate(navigationStacks.home as never);
         backMainMenu();
       }, 2000);
@@ -203,9 +205,12 @@ export const RegistrationScreen: React.FC = () => {
             password: password,
             isLogined: true,
           };
-          dispatch(registrationUser(payload));
-          navigation.navigate(navigationStacks.home as never);
-          backMainMenu();
+          dispatch(loadingUser());
+          setTimeout(() => {
+            dispatch(registrationUser(payload));
+            navigation.navigate(navigationStacks.home as never);
+            backMainMenu();
+          }, 2000);
         })
         .catch(() => {
           showError('Неверно введен email и/или пароль');
@@ -232,7 +237,7 @@ export const RegistrationScreen: React.FC = () => {
   };
 
   if (
-    (isAdditionalLoad || isAuthLoading) &&
+    isLoading &&
     (choiceToEnter === AUTHORIZATION || choiceToEnter === USERDATA)
   ) {
     return <LoadingComponent />;
@@ -267,7 +272,7 @@ export const RegistrationScreen: React.FC = () => {
             avatar={avatar}
             username={username}
             setUsername={setUsername}
-            isRegLoading={isRegLoading}
+            isLoading={isLoading}
             additionalRegistration={additionalRegistration}
             isVisible={isVisible}
             setIsVisible={setIsVisible}

@@ -20,7 +20,7 @@ const favoritesSlice = createSlice({
       state.drinks = [...state.drinks].filter(el => el.id !== drinkId);
     },
     addCafe(state, action: IAddCafeAction) {
-      const updateCafe = action.payload;
+      const updateCafe = {...action.payload};
       updateCafe.favorite = true;
       state.cafe.push(updateCafe);
     },

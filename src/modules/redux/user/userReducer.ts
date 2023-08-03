@@ -18,10 +18,12 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.password = action.payload.password;
       state.isLogined = action.payload.isLogined;
+      state.isLoading = false;
     },
     saveUserData(state, action: IUserDataAction) {
       state.userName = action.payload.userName;
       state.avatar = action.payload.avatar;
+      state.isLoading = false;
     },
     userLogout(state) {
       state.sessionId = '';

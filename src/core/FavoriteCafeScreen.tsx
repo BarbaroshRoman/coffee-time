@@ -38,11 +38,13 @@ export const FavoriteCafeScreen: React.FC<IFavoriteCafeScreenProps> = ({
     <View style={styles.container}>
       <HeaderComponent isGoBack={false} openDrawer={openDrawer} />
       {cafeList.length ? (
-        <FlatList
-          data={cafeList}
-          renderItem={renderCafeList}
-          keyExtractor={item => item.id + item.name}
-        />
+        <View style={styles.cafeListContainer}>
+          <FlatList
+            data={cafeList}
+            renderItem={renderCafeList}
+            keyExtractor={item => item.id + item.name}
+          />
+        </View>
       ) : (
         <View style={styles.emptyListContainer}>
           <Image source={image} style={styles.coffeeImage} />
@@ -59,6 +61,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
+  },
+  cafeListContainer: {
+    marginBottom: '30%',
   },
   emptyListContainer: {
     alignItems: 'center',

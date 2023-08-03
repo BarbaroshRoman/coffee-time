@@ -8,25 +8,32 @@ import {IProductBriefInfo} from '../../types/productTypes';
 type Props = {
   item: IProductBriefInfo;
   goToProduct: (item: IProductBriefInfo) => void;
-  setAndUnsetFavoriteProduct: (item: IProductBriefInfo, method: string) => void;
+  isCafeDetailsScreen?: boolean;
+  setAndUnsetFavoriteProduct?: (
+    item: IProductBriefInfo,
+    method: string,
+  ) => void;
+  unsetFavoriteProduct?: (item: IProductBriefInfo) => void;
   getAllProduct?: () => Promise<void>;
   favoriteDrinks?: IProductBriefInfo[];
-  isCafeDetailsScreen?: boolean;
 };
 export const ProductsListView = (props: Props) => {
   const {
     item,
     goToProduct,
     setAndUnsetFavoriteProduct,
+    unsetFavoriteProduct,
     getAllProduct,
     favoriteDrinks,
     isCafeDetailsScreen,
   } = props;
 
   useEffect(() => {
-    const targetDrink = favoriteDrinks?.find(el => el.id === item.id);
-    if (isCafeDetailsScreen && targetDrink?.favorite !== item.favorite) {
-      getAllProduct?.();
+    if (isCafeDetailsScreen) {
+      const targetDrink = favoriteDrinks?.find(el => el.id === item.id);
+      if (targetDrink?.favorite !== item.favorite) {
+        getAllProduct?.();
+      }
     }
   }, [favoriteDrinks, isCafeDetailsScreen, item.favorite, item.id]);
 
@@ -40,9 +47,13 @@ export const ProductsListView = (props: Props) => {
         <Text style={styles.price}>{item.price} ₽</Text>
         <TouchableOpacity
           onPress={() => {
-            item.favorite
-              ? setAndUnsetFavoriteProduct(item, 'unset')
-              : setAndUnsetFavoriteProduct(item, 'set');
+            if (setAndUnsetFavoriteProduct) {
+              item.favorite
+                ? setAndUnsetFavoriteProduct(item, 'unset')
+                : setAndUnsetFavoriteProduct(item, 'set');
+            } else if (unsetFavoriteProduct) {
+              unsetFavoriteProduct(item);
+            }
           }}>
           <AntDesign
             name={item.favorite ? 'heart' : 'hearto'}

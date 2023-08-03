@@ -78,13 +78,9 @@ export const ProductDetailsScreen: React.FC = () => {
     async (product: IProductRequest): Promise<void> => {
       await setFavorite(product)
         .unwrap()
-        .then(response => {
-          setProductInfo(prevState => ({
-            ...prevState,
-            favarite: response,
-          }));
+        .then(() => {
           const newItem: IProductBriefInfo = {...route.params};
-          newItem.favorite = response ?? newItem.favorite;
+          newItem.favorite = true;
           dispatch(addDrink(newItem));
         })
         .catch(() => {
@@ -101,11 +97,7 @@ export const ProductDetailsScreen: React.FC = () => {
     async (product: IProductRequest): Promise<void> => {
       await unsetFavorite(product)
         .unwrap()
-        .then(response => {
-          setProductInfo(prevState => ({
-            ...prevState,
-            favarite: response,
-          }));
+        .then(() => {
           dispatch(removeDrink(route.params.id));
         })
         .catch(() => {

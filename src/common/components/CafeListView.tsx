@@ -11,7 +11,6 @@ type Props = {
 };
 export const CafeListView = (props: Props) => {
   const {item, goToCafe} = props;
-
   return (
     <TouchableOpacity style={styles.container} onPress={() => goToCafe(item)}>
       <Image source={{uri: item.images}} style={styles.coffeeImage} />

@@ -25,7 +25,7 @@ type Props = {
   confirmation: string;
   errorMessage: string;
   backMainMenu: () => void;
-  isRegLoading?: boolean;
+  isLoading?: boolean;
   isVisible: IVisiblePassword;
   setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
 };
@@ -41,14 +41,14 @@ export const LoginMethod = (props: Props) => {
     isRegistration,
     passwordConfirmation,
     setPasswordConfirmation,
-    isRegLoading,
+    isLoading,
     handleAuthorizationUser,
     handleRegistrationUser,
     isVisible,
     setIsVisible,
   } = props;
 
-  if (isRegLoading && isRegistration) {
+  if (isLoading && isRegistration) {
     return (
       <View style={styles.registrationLoading}>
         <Spinner type="Wave" color={COLORS.white} size={80} />

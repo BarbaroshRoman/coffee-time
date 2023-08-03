@@ -29,7 +29,7 @@ type Props = {
   avatar: string;
   username: string;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
-  isRegLoading: boolean;
+  isLoading: boolean;
   additionalRegistration: () => void;
   isVisible: IVisiblePassword;
   setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
@@ -53,7 +53,7 @@ export const RegistrationContainer = (props: Props) => {
     avatar,
     username,
     setUsername,
-    isRegLoading,
+    isLoading,
     additionalRegistration,
     isVisible,
     setIsVisible,
@@ -89,7 +89,7 @@ export const RegistrationContainer = (props: Props) => {
           backMainMenu={backMainMenu}
           passwordConfirmation={passwordConfirmation}
           setPasswordConfirmation={setPasswordConfirmation}
-          isRegLoading={isRegLoading}
+          isLoading={isLoading}
           isVisible={isVisible}
           setIsVisible={setIsVisible}
         />
