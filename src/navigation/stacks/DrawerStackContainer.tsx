@@ -1,13 +1,12 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {navigationStacks} from '../components/navigationStacks';
 import {HomeScreen} from '../../core/HomeScreen';
 import {CustomDrawerContent} from '../../common/components/CustomDrawerContent';
 import {COLORS} from '../../../resources/colors';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {FavoriteDrinksScreen} from '../../core/FavoriteDrinksScreen';
-import { TabStackContainer } from "./TabStackContainer";
+import {TabStackContainer} from './TabStackContainer';
 
 const Drawer = createDrawerNavigator();
 export const DrawerStackContainer = () => {

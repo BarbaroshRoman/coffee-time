@@ -5,7 +5,7 @@ import {navigationStacks} from '../components/navigationStacks';
 import {CafeDetailsScreen} from '../../core/CafeDetailsScreen';
 import {navigationHomePages} from '../components/navigationHomePages';
 import {DrawerStackContainer} from './DrawerStackContainer';
-import { ProductDetailsScreen } from "../../core/ProductDetailsScreen";
+import {ProductDetailsScreen} from '../../core/ProductDetailsScreen';
 
 const HomeStack = createNativeStackNavigator();
 

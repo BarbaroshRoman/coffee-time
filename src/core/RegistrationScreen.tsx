@@ -23,8 +23,7 @@ import {
 import {navigationStacks} from '../navigation/components/navigationStacks';
 import {LoadingComponent} from '../common/components/LoadingComponent';
 import {useAuthorizationMutation, useRegisterMutation} from './api/userRequest';
-import {IUserRequest} from '../types/userRequestType';
-import {IUserSuccessPayload} from '../types/userType';
+import {IUserRequest, IUserSuccessPayload} from '../types/userTypes';
 
 export const MAIN_MENU = 'MAIN_MENU';
 export const REGISTRATION = 'REGISTRATION';

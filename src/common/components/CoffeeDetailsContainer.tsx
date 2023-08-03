@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 
 import {COLORS} from '../../../resources/colors';
-import {IAttributeInfo} from '../../types/productRequestType';
+import {IAttributeInfo} from '../../types/productTypes';
 
 type Props = {
   attribute: IAttributeInfo[];

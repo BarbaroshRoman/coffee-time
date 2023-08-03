@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {IProductBriefInfo} from '../../core/api/CoffeeRequest';
 import {COLORS} from '../../../resources/colors';
+import {IProductBriefInfo} from '../../types/productTypes';
 
 type Props = {
   item: IProductBriefInfo;

@@ -4,12 +4,6 @@ import {HeaderComponent} from '../common/components/HeaderComponent';
 import {COLORS} from '../../resources/colors';
 import {DrawerContentComponentProps} from '@react-navigation/drawer';
 import {useTypedSelector} from '../hooks/useTypedSelector';
-import {
-  FavoriteClientRequest,
-  IProductBriefInfo,
-  IProductRequest,
-  ProductRequest,
-} from './api/CoffeeRequest';
 import {ProductsListView} from '../common/components/ProductsListView';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
 import {
@@ -18,6 +12,7 @@ import {
 } from '../modules/redux/favorites/favoritesReducer';
 import {useDispatch} from 'react-redux';
 import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
+import {IProductBriefInfo, IProductRequest} from '../types/productTypes';
 
 interface IFavoriteDrinksScreenProps {
   navigation: DrawerContentComponentProps['navigation'];
@@ -47,6 +42,42 @@ export const FavoriteDrinksScreen: React.FC<IFavoriteDrinksScreenProps> = ({
     [navigation],
   );
 
+  const setFavoriteHelper = useCallback(
+    async (
+      product: IProductRequest,
+      item: IProductBriefInfo,
+    ): Promise<void> => {
+      await setFavorite(product)
+        .unwrap()
+        .then(response => {
+          item.favorite = response;
+          dispatch(addDrink(item));
+        })
+        .catch(() => {
+          showError('Попробуйте позже');
+        });
+    },
+    [dispatch, setFavorite],
+  );
+
+  const unsetFavoriteHelper = useCallback(
+    async (
+      product: IProductRequest,
+      item: IProductBriefInfo,
+    ): Promise<void> => {
+      await unsetFavorite(product)
+        .unwrap()
+        .then(response => {
+          item.favorite = response;
+          dispatch(removeDrink(item.id));
+        })
+        .catch(() => {
+          showError('Попробуйте позже');
+        });
+    },
+    [dispatch, unsetFavorite],
+  );
+
   const setAndUnsetFavoriteProduct = useCallback(
     async (item: IProductBriefInfo, method: string): Promise<void> => {
       const product: IProductRequest = {
@@ -54,44 +85,13 @@ export const FavoriteDrinksScreen: React.FC<IFavoriteDrinksScreenProps> = ({
         productId: item.id,
       };
       if (method === 'set') {
-        await setFavorite(product).unwrap().then(response => {
-          item.favorite = response;
-          dispatch(addDrink(item)); // todo проверить типы addDrink в редюсере
-        })
+        await setFavoriteHelper(product, item);
+      } else if (method === 'unset') {
+        await unsetFavoriteHelper(product, item);
       }
     },
-    [],
+    [sessionId],
   );
-
-  // const setAndUnsetFavoriteProduct = useCallback(
-  //   async (item: IProductBriefInfo, method: string): Promise<void> => {
-  //     const favoriteClientRequest = new FavoriteClientRequest();
-  //     const product: IProductRequest = {
-  //       sessionId: sessionId,
-  //       productId: item.id,
-  //     };
-  //     try {
-  //       if (method === 'set') {
-  //         const favoriteRequest: boolean | null =
-  //           await favoriteClientRequest.set(new ProductRequest(product));
-  //         if (favoriteRequest) {
-  //           item.favorite = favoriteRequest;
-  //           dispatch(addDrink(item));
-  //         }
-  //       } else if (method === 'unset') {
-  //         const favoriteRequest: boolean | null =
-  //           await favoriteClientRequest.unset(new ProductRequest(product));
-  //         if (favoriteRequest) {
-  //           item.favorite = favoriteRequest;
-  //           dispatch(removeDrink(item.id));
-  //         }
-  //       }
-  //     } catch {
-  //       showError('Попробуйте позже');
-  //     }
-  //   },
-  //   [dispatch, sessionId],
-  // );
 
   const showError = (errorMes: string): void => {
     Alert.alert('Ошибка', errorMes, [

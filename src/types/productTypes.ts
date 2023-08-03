@@ -19,3 +19,12 @@ export interface IAttributeInfo {
   description: string;
   iconType: string;
 }
+
+export interface IProductBriefInfo {
+  id: string;
+  cofeId: string;
+  name: string;
+  price: number;
+  favorite: boolean | null;
+  imagesPath?: string | undefined;
+}

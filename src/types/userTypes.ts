@@ -17,3 +17,8 @@ export interface IUserRegistrationAction {
 export interface IUserDataAction {
   payload: IUserDataPayload;
 }
+
+export interface IUserRequest {
+  email?: string | undefined;
+  password: string;
+}

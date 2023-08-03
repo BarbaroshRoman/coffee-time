@@ -1,4 +1,4 @@
-import {IProductFullInfo} from '../../types/productRequestType';
+import {IProductFullInfo} from '../../types/productTypes';
 
 const oldLinks = [
   'https://stozabot.com/wp-content/uploads/2017/01/chtoby-vypit-vkusnyy-kapuchino-ne-obyazatelno-idti.jpg',

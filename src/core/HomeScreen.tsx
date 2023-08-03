@@ -14,9 +14,11 @@ import {IconCafeComponent} from '../common/components/IconCafeComponent';
 import {MapComponent} from '../common/components/MapComponent';
 import {useGetAllCafeMutation} from './api/cafeRequest';
 
-export const HomeScreen: React.FC<DrawerContentComponentProps> = ({
-  navigation,
-}) => {
+interface IHomeScreenProps {
+  navigation: DrawerContentComponentProps['navigation'];
+}
+
+export const HomeScreen: React.FC<IHomeScreenProps> = ({navigation}) => {
   const sessionId = useTypedSelector(state => state.user.sessionId);
   const isLoading = useTypedSelector(state => state.user.isLoading);
   const image = require('../../resources/images/image_no_coffe.png');

@@ -12,21 +12,11 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
 
-import {
-  CafeRequest,
-  FavoriteClientRequest,
-  ICafeRequest,
-  IProductBriefInfo,
-  IProductRequest,
-  ProductClientRequest,
-  ProductRequest,
-} from './api/CoffeeRequest';
 import {COLORS} from '../../resources/colors';
 import {useTypedSelector} from '../hooks/useTypedSelector';
 import {ProductsListView} from '../common/components/ProductsListView';
 import {DetailsContainer} from '../common/components/DetailsContainer';
 import {HeaderComponent} from '../common/components/HeaderComponent';
-import {replaceProductsLinks} from '../common/helpers/replaceProductsLinks';
 import {navigationHomePages} from '../navigation/components/navigationHomePages';
 import {
   addCafe,
@@ -35,6 +25,10 @@ import {
   removeDrink,
 } from '../modules/redux/favorites/favoritesReducer';
 import {INewCafeInfo} from '../common/helpers/replaceCafeList';
+import {IProductBriefInfo, IProductRequest} from '../types/productTypes';
+import {useGetProductsCafeMutation} from './api/productRequest';
+import {ICafeRequest} from '../types/cafeTypes';
+import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
 
 export const CafeDetailsScreen: React.FC = () => {
   const image = require('../../resources/images/image_no_coffe.png');
@@ -44,6 +38,9 @@ export const CafeDetailsScreen: React.FC = () => {
   const sessionId = useTypedSelector(state => state.user.sessionId);
   const favoriteDrinks = useTypedSelector(state => state.favorites.drinks);
   const cafeList = useTypedSelector(state => state.favorites.cafe);
+  const [getProductsCafe] = useGetProductsCafeMutation();
+  const [setFavorite] = useSetMutation();
+  const [unsetFavorite] = useUnsetMutation();
 
   const [productsList, setProductsList] = useState<IProductBriefInfo[]>([]);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -58,58 +55,72 @@ export const CafeDetailsScreen: React.FC = () => {
   }, [navigation]);
 
   const getAllProduct = useCallback(async (): Promise<void> => {
-    const productsRequest = new ProductClientRequest();
-    const cafeData: ICafeRequest = {
+    const cafe: ICafeRequest = {
       sessionId: sessionId,
       cafeId: route.params.id,
     };
+    await getProductsCafe(cafe)
+      .unwrap()
+      .then(response => {
+        setProductsList(response ?? []);
+      })
+      .catch(() => {
+        setErrorMessages([
+          'Здесь нет ни одной чашки кофе',
+          'Попробуйте вернуться к нам позже',
+        ]);
+      });
+  }, [getProductsCafe, route.params.id, sessionId]);
 
-    try {
-      const allProduct: IProductBriefInfo[] | null =
-        await productsRequest.getProductsCafe(new CafeRequest(cafeData));
+  const setFavoriteHelper = useCallback(
+    async (
+      product: IProductRequest,
+      item: IProductBriefInfo,
+    ): Promise<void> => {
+      await setFavorite(product)
+        .unwrap()
+        .then(response => {
+          item.favorite = response;
+          dispatch(addDrink(item));
+        })
+        .catch(() => {
+          showError('Попробуйте позже');
+        });
+    },
+    [dispatch, setFavorite],
+  );
 
-      const newProductList = replaceProductsLinks(allProduct);
-      setProductsList(newProductList ?? []);
-    } catch {
-      setErrorMessages([
-        'Здесь нет ни одной чашки кофе',
-        'Попробуйте вернуться к нам позже',
-      ]);
-    }
-  }, [route.params.id, sessionId]);
+  const unsetFavoriteHelper = useCallback(
+    async (
+      product: IProductRequest,
+      item: IProductBriefInfo,
+    ): Promise<void> => {
+      await unsetFavorite(product)
+        .unwrap()
+        .then(response => {
+          item.favorite = response;
+          dispatch(removeDrink(item.id));
+        })
+        .catch(() => {
+          showError('Попробуйте позже');
+        });
+    },
+    [dispatch, unsetFavorite],
+  );
 
   const setAndUnsetFavoriteProduct = useCallback(
     async (item: IProductBriefInfo, method: string): Promise<void> => {
-      const favoriteClientRequest = new FavoriteClientRequest();
       const product: IProductRequest = {
         sessionId: sessionId,
         productId: item.id,
       };
-      try {
-        if (method === 'set') {
-          const favoriteRequest: boolean | null =
-            await favoriteClientRequest.set(new ProductRequest(product));
-
-          if (favoriteRequest) {
-            item.favorite = favoriteRequest;
-            dispatch(addDrink(item));
-          }
-        } else if (method === 'unset') {
-          const favoriteRequest: boolean | null =
-            await favoriteClientRequest.unset(new ProductRequest(product));
-
-          if (favoriteRequest) {
-            item.favorite = favoriteRequest;
-            dispatch(removeDrink(item.id));
-          }
-        }
-      } catch {
-        showError('Попробуйте позже');
-      } finally {
-        getAllProduct();
+      if (method === 'set') {
+        await setFavoriteHelper(product, item);
+      } else if (method === 'unset') {
+        await unsetFavoriteHelper(product, item);
       }
     },
-    [dispatch, sessionId],
+    [sessionId],
   );
 
   const showError = (errorMes: string): void => {

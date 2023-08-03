@@ -11,7 +11,6 @@ import {
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 
-import {IProductBriefInfo} from './api/CoffeeRequest';
 import {HeaderComponent} from '../common/components/HeaderComponent';
 import {COLORS} from '../../resources/colors';
 import {PopUpNotification} from '../common/components/PopUpNotification';
@@ -23,7 +22,11 @@ import {
   removeDrink,
 } from '../modules/redux/favorites/favoritesReducer';
 import {useTypedSelector} from '../hooks/useTypedSelector';
-import {IProductFullInfo, IProductRequest} from '../types/productRequestType';
+import {
+  IProductBriefInfo,
+  IProductFullInfo,
+  IProductRequest,
+} from '../types/productTypes';
 import {useGetProductMutation} from './api/productRequest';
 import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
 
@@ -71,7 +74,7 @@ export const ProductDetailsScreen: React.FC = () => {
     navigation.goBack();
   }, [navigation]);
 
-  const setFavoriteProduct = useCallback(
+  const setFavoriteHelper = useCallback(
     async (product: IProductRequest): Promise<void> => {
       await setFavorite(product)
         .unwrap()
@@ -94,7 +97,7 @@ export const ProductDetailsScreen: React.FC = () => {
     [dispatch, route.params, setFavorite],
   );
 
-  const unsetFavoriteProduct = useCallback(
+  const unsetFavoriteHelper = useCallback(
     async (product: IProductRequest): Promise<void> => {
       await unsetFavorite(product)
         .unwrap()
@@ -116,15 +119,15 @@ export const ProductDetailsScreen: React.FC = () => {
   );
 
   const setAndUnsetFavoriteProduct = useCallback(
-    (method: string): void => {
+    async (method: string): Promise<void> => {
       const product: IProductRequest = {
         sessionId: sessionId,
         productId: route.params.id,
       };
       if (method === 'set') {
-        setFavoriteProduct(product);
+        await setFavoriteHelper(product);
       } else if (method === 'unset') {
-        unsetFavoriteProduct(product);
+        await unsetFavoriteHelper(product);
       }
     },
     [route.params.id, sessionId],

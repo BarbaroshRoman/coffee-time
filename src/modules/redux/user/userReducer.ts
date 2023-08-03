@@ -4,7 +4,7 @@ import {userState} from './userState';
 import {
   IUserDataAction,
   IUserRegistrationAction,
-} from '../../../types/userType';
+} from '../../../types/userTypes';
 
 const userSlice = createSlice({
   name: 'User',

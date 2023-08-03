@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
-import {IProductRequest} from '../../types/productRequestType';
+import {IProductRequest} from '../../types/productTypes';
 
 export const favoriteRequest = createApi({
   reducerPath: 'favoriteRequest',

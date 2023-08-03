@@ -1,4 +1,4 @@
-import {IProductBriefInfo} from '../../core/api/CoffeeRequest';
+import {IProductBriefInfo} from '../../types/productTypes';
 
 const newLinks = [
   'https://ambassador-manufaktura.ru/upload/medialibrary/4ff/4ff982a7c3d3a59d0525472472115390.jpg',
@@ -11,7 +11,7 @@ const newLinks = [
 
 export const replaceProductsLinks = (
   allProduct: IProductBriefInfo[] | null,
-) => {
+): IProductBriefInfo[] | undefined => {
   return allProduct?.map(el => {
     if (el.name === 'Капучино') {
       el.imagesPath = newLinks[0];
