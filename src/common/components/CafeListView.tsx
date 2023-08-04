@@ -13,7 +13,7 @@ export const CafeListView = (props: Props) => {
   const {item, goToCafe} = props;
   return (
     <TouchableOpacity style={styles.container} onPress={() => goToCafe(item)}>
-      <Image source={{uri: item.images}} style={styles.coffeeImage} />
+      <Image source={{uri: item.images}} style={styles.imageNoCoffee} />
       <View style={styles.cafeTableOfContents}>
         <Text style={styles.cafeName}>{item.name}</Text>
         <Text style={styles.addressHelperText}>мы находимся:</Text>
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     elevation: 2,
   },
-  coffeeImage: {
+  imageNoCoffee: {
     height: 126,
     width: 126,
   },

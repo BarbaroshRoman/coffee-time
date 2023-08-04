@@ -16,6 +16,7 @@ export type Colors = {
   asparagus: string;
   slateGray: string;
   transparent: string;
+  glitter: string;
 };
 
 export const COLORS: Colors = {
@@ -36,4 +37,5 @@ export const COLORS: Colors = {
   asparagus: '#a0be74',
   slateGray: '#5e5e5e',
   transparent: 'transparent',
+  glitter: '#f5f5f5',
 };

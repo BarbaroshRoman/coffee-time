@@ -161,7 +161,7 @@ export const ProductDetailsScreen: React.FC = () => {
             <View style={styles.sharpenedBox} />
           </View>
           <View style={styles.imageContainer}>
-            <Image source={{uri: imagesPath}} style={styles.cofeeImage} />
+            <Image source={{uri: imagesPath}} style={styles.coffeeImage} />
           </View>
           <PopUpNotification popAnim={popAnim} />
           <ProductNameContainer
@@ -177,7 +177,7 @@ export const ProductDetailsScreen: React.FC = () => {
         </>
       ) : (
         <View style={styles.emptyListContainer}>
-          <Image source={imageNoCoffee} style={styles.coffeeImage} />
+          <Image source={imageNoCoffee} style={styles.imageNoCoffee} />
           <Text style={styles.errorText}>Не удалось получить данные</Text>
         </View>
       )}
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   imageContainer: {
+    flex: 1,
     marginTop: 2,
     alignItems: 'center',
   },
@@ -217,14 +218,15 @@ const styles = StyleSheet.create({
     borderRightColor: 'white',
     overflow: 'hidden',
   },
-  cofeeImage: {
-    width: 260,
-    height: 260,
+  coffeeImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   emptyListContainer: {
     alignItems: 'center',
   },
-  coffeeImage: {
+  imageNoCoffee: {
     width: 180,
     height: 180,
     marginLeft: 20,

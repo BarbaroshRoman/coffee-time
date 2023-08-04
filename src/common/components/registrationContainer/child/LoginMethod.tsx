@@ -10,7 +10,7 @@ import Spinner from 'react-native-spinkit';
 
 import {COLORS} from '../../../../../resources/colors';
 import {IVisiblePassword} from '../../../../core/RegistrationScreen';
-import {InputContainer} from '../../InputContainer';
+import {PasswordInput} from '../../PasswordInput';
 
 type Props = {
   isRegistration?: boolean;
@@ -57,42 +57,42 @@ export const LoginMethod = (props: Props) => {
   } else {
     return (
       <View style={styles.container}>
-        <TextInput
-          style={[styles.registrationInput, {marginLeft: 4}]}
-          onChangeText={setEmail}
-          value={email}
-          placeholder="Введите email"
-          autoComplete={'email'}
-        />
-        <InputContainer
-          password={password}
-          setPassword={setPassword}
-          placeholder={'Введите пароль'}
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-        />
-        {isRegistration && (
-          <InputContainer
-            password={passwordConfirmation}
-            setPassword={setPasswordConfirmation}
-            placeholder={'Подтвердите пароль'}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.emailInput}
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Введите email"
+            autoComplete={'email'}
+          />
+          <PasswordInput
+            password={password}
+            setPassword={setPassword}
+            placeholder={'Введите пароль'}
             isVisible={isVisible}
             setIsVisible={setIsVisible}
-            isRegistration={isRegistration}
           />
-        )}
+          {isRegistration && (
+            <PasswordInput
+              password={passwordConfirmation}
+              setPassword={setPasswordConfirmation}
+              placeholder={'Подтвердите пароль'}
+              isVisible={isVisible}
+              setIsVisible={setIsVisible}
+              isRegistration={isRegistration}
+            />
+          )}
+        </View>
         <Text style={styles.errorHandlerText}>{errorMessage}</Text>
         <TouchableOpacity
-          style={styles.confirmationButton}
+          style={styles.buttons}
           onPress={
             isRegistration ? handleRegistrationUser : handleAuthorizationUser
           }>
-          <Text style={styles.registrationButtonText}>{confirmation}</Text>
+          <Text style={styles.buttonsText}>{confirmation}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.confirmationButton}
-          onPress={backMainMenu}>
-          <Text style={styles.registrationButtonText}>Назад</Text>
+        <TouchableOpacity style={styles.buttons} onPress={backMainMenu}>
+          <Text style={styles.buttonsText}>Назад</Text>
         </TouchableOpacity>
       </View>
     );
@@ -108,7 +108,10 @@ const styles = StyleSheet.create({
     marginTop: '4%',
     marginHorizontal: '12%',
   },
-  registrationInput: {
+  inputContainer: {
+    alignItems: 'center',
+  },
+  emailInput: {
     paddingVertical: 8,
     width: 270,
     marginTop: 18,
@@ -121,14 +124,15 @@ const styles = StyleSheet.create({
   errorHandlerText: {
     color: COLORS.red,
     fontSize: 16,
+    marginLeft: 24,
   },
-  confirmationButton: {
-    marginTop: 40,
+  buttons: {
+    marginTop: 20,
     borderRadius: 10,
     backgroundColor: COLORS.darkBlue,
     paddingVertical: 14,
   },
-  registrationButtonText: {
+  buttonsText: {
     fontSize: 16,
     color: COLORS.white,
     textAlign: 'center',

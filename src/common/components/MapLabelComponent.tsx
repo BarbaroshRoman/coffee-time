@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   mapLabel: {
     position: 'absolute',
     flexDirection: 'row',
-    marginTop: 70,
+    top: '11%',
     width: 126,
     height: 32,
     justifyContent: 'space-between',

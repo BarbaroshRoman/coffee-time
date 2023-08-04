@@ -200,7 +200,7 @@ export const CafeDetailsScreen: React.FC = () => {
         </>
       ) : (
         <View style={styles.emptyListContainer}>
-          <Image source={image} style={styles.coffeeImage} />
+          <Image source={image} style={styles.imageNoCoffee} />
           <Text style={styles.errorText}>{errorMessages[0]}</Text>
           <Text style={styles.errorText}>{errorMessages[1]}</Text>
         </View>
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   emptyListContainer: {
     alignItems: 'center',
   },
-  coffeeImage: {
+  imageNoCoffee: {
     width: 180,
     height: 180,
     marginLeft: 20,

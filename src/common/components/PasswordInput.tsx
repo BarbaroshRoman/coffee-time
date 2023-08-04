@@ -13,7 +13,7 @@ type Props = {
   setIsVisible: React.Dispatch<React.SetStateAction<IVisiblePassword>>;
   isRegistration?: boolean;
 };
-export const InputContainer = (props: Props) => {
+export const PasswordInput = (props: Props) => {
   const {
     isVisible,
     setIsVisible,
@@ -25,7 +25,7 @@ export const InputContainer = (props: Props) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput
-        style={styles.registrationInput}
+        style={styles.passwordInput}
         onChangeText={setPassword}
         value={password}
         placeholder={placeholder}
@@ -34,7 +34,7 @@ export const InputContainer = (props: Props) => {
         }
       />
       <TouchableOpacity
-        style={styles.iconButton}
+        style={styles.visibilityIconButton}
         onPress={() =>
           isRegistration
             ? setIsVisible({
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  registrationInput: {
+  passwordInput: {
     paddingVertical: 8,
     width: 270,
     marginTop: 18,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLORS.black,
   },
-  iconButton: {
+  visibilityIconButton: {
     position: 'absolute',
   },
   icon: {

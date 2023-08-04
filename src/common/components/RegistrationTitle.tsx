@@ -1,5 +1,6 @@
-import {Animated, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {Animated, StyleSheet, Text, View} from 'react-native';
+
 import {COLORS} from '../../../resources/colors';
 
 type Props = {

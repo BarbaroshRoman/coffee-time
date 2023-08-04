@@ -52,9 +52,9 @@ export const CustomDrawerContent: React.FC<
     <View style={styles.customDrawerContainer}>
       <View style={styles.headerContainer}>
         {avatar ? (
-          <Image source={{uri: avatar}} style={styles.coffeeImage} />
+          <Image source={{uri: avatar}} style={styles.imageNoCoffee} />
         ) : (
-          <View style={styles.coffeeImage} />
+          <View style={styles.imageNoCoffee} />
         )}
         <Text style={styles.usernameText}>{username}</Text>
       </View>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     padding: 30,
     alignItems: 'center',
   },
-  coffeeImage: {
+  imageNoCoffee: {
     backgroundColor: COLORS.ghostWhite,
     height: 100,
     width: 100,

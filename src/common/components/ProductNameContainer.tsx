@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   productNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 20,
   },
   productName: {
     color: COLORS.dimGray,

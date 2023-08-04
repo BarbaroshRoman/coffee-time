@@ -38,7 +38,7 @@ export const FavoriteCafeScreen: React.FC<IFavoriteCafeScreenProps> = ({
     <View style={styles.container}>
       <HeaderComponent isGoBack={false} openDrawer={openDrawer} />
       {cafeList.length ? (
-        <View style={styles.cafeListContainer}>
+        <View style={styles.indentForMapLabel}>
           <FlatList
             data={cafeList}
             renderItem={renderCafeList}
@@ -47,7 +47,7 @@ export const FavoriteCafeScreen: React.FC<IFavoriteCafeScreenProps> = ({
         </View>
       ) : (
         <View style={styles.emptyListContainer}>
-          <Image source={image} style={styles.coffeeImage} />
+          <Image source={image} style={styles.imageNoCoffee} />
           <Text style={styles.errorText}>
             Вы пока что не добавили любимое кафе
           </Text>
@@ -62,13 +62,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.white,
   },
-  cafeListContainer: {
+  indentForMapLabel: {
     marginBottom: '30%',
   },
   emptyListContainer: {
     alignItems: 'center',
   },
-  coffeeImage: {
+  imageNoCoffee: {
     width: 180,
     height: 180,
     marginLeft: 20,

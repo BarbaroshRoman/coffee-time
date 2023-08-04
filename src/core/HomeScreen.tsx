@@ -68,14 +68,6 @@ export const HomeScreen: React.FC<IHomeScreenProps> = ({navigation}) => {
     return (
       <View style={styles.container}>
         <HeaderComponent openDrawer={openDrawer} />
-        {!cafeList.length && (
-          <View style={styles.emptyListContainer}>
-            <Image source={image} style={styles.coffeeImage} />
-            <Text style={styles.errorText}>
-              По вашему запросу ничего не найдено
-            </Text>
-          </View>
-        )}
         {isMap ? (
           <MapComponent
             cafeList={cafeList}
@@ -83,13 +75,22 @@ export const HomeScreen: React.FC<IHomeScreenProps> = ({navigation}) => {
             goToCafe={goToCafe}
           />
         ) : (
-          <View style={styles.cafeListContainer}>
+          <>
+            <View style={styles.indentForMapLabel} />
+            {!cafeList.length && (
+              <View style={styles.emptyListContainer}>
+                <Image source={image} style={styles.imageNoCoffee} />
+                <Text style={styles.errorText}>
+                  По вашему запросу ничего не найдено
+                </Text>
+              </View>
+            )}
             <FlatList
               data={cafeList}
               renderItem={renderCafeList}
               keyExtractor={item => item.id + item.name}
             />
-          </View>
+          </>
         )}
         <MapLabelComponent
           isMap={isMap}
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   emptyListContainer: {
     alignItems: 'center',
   },
-  coffeeImage: {
+  imageNoCoffee: {
     width: 180,
     height: 180,
     marginLeft: 20,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: '24%',
   },
-  cafeListContainer: {
+  indentForMapLabel: {
     marginTop: 50,
   },
 });

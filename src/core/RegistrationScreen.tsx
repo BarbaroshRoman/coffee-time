@@ -4,6 +4,7 @@ import {
   Animated,
   Dimensions,
   ImageBackground,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
@@ -243,16 +244,14 @@ export const RegistrationScreen: React.FC = () => {
     return <LoadingComponent />;
   } else {
     return (
-      <View style={styles.container}>
-        <ImageBackground
-          source={imageBackground}
-          style={styles.imageBackground}>
-          <View style={styles.gradientContainer}>
-            <LinearGradient
-              colors={['transparent', 'rgba(205,205,205,0.6)']}
-              style={styles.gradient}
-            />
-          </View>
+      <ImageBackground source={imageBackground} style={styles.imageBackground}>
+        <View style={styles.gradientContainer}>
+          <LinearGradient
+            colors={['transparent', 'rgba(205,205,205,0.6)']}
+            style={styles.gradient}
+          />
+        </View>
+        <ScrollView automaticallyAdjustKeyboardInsets={true}>
           <RegistrationTitle fadeAnim={fadeAnim} />
           <RegistrationContainer
             fadeAnim={fadeAnim}
@@ -277,20 +276,15 @@ export const RegistrationScreen: React.FC = () => {
             isVisible={isVisible}
             setIsVisible={setIsVisible}
           />
-        </ImageBackground>
-      </View>
+        </ScrollView>
+      </ImageBackground>
     );
   }
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   imageBackground: {
-    resizeMode: 'cover',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    flex: 1,
   },
   gradientContainer: {
     position: 'absolute',

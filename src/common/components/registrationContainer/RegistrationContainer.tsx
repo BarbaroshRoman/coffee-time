@@ -112,12 +112,12 @@ export const RegistrationContainer = (props: Props) => {
             <TouchableOpacity
               style={styles.registrationButton}
               onPress={() => setChoiceToEnter(AUTHORIZATION)}>
-              <Text style={styles.registrationButtonText}>Войти</Text>
+              <Text style={styles.buttonsText}>Войти</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.registrationButton}
               onPress={() => setChoiceToEnter(REGISTRATION)}>
-              <Text style={styles.registrationButtonText}>Регистрация</Text>
+              <Text style={styles.buttonsText}>Регистрация</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginTop: 44,
     borderRadius: 40,
   },
-  registrationButtonText: {
+  buttonsText: {
     fontSize: 16,
     color: COLORS.white,
     textAlign: 'center',

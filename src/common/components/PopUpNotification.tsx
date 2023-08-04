@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, Text, View, Animated} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
+import {COLORS} from '../../../resources/colors';
+
 type Props = {
   popAnim: any;
 };
@@ -33,11 +35,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 60,
     width: 350,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.glitter,
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: COLORS.black,
     shadowOffset: {
       width: 0,
       height: 2,

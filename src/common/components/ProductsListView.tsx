@@ -42,8 +42,8 @@ export const ProductsListView = (props: Props) => {
       style={styles.container}
       onPress={() => goToProduct(item)}>
       <Text style={styles.name}>{item.name}</Text>
-      <Image source={{uri: item.imagesPath}} style={styles.coffeeImage} />
-      <View style={styles.bottomContainer}>
+      <Image source={{uri: item.imagesPath}} style={styles.imageNoCoffee} />
+      <View style={styles.iconBox}>
         <Text style={styles.price}>{item.price} ₽</Text>
         <TouchableOpacity
           onPress={() => {
@@ -68,7 +68,7 @@ export const ProductsListView = (props: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 176,
+    width: '50%',
     backgroundColor: COLORS.white,
     elevation: 2,
     marginHorizontal: 2,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontFamily: 'Lobster-Regular',
   },
-  coffeeImage: {
+  imageNoCoffee: {
     width: '100%',
     height: 150,
   },
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingLeft: 10,
   },
-  bottomContainer: {
+  iconBox: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingRight: 10,
