@@ -29,7 +29,6 @@ export const TabStackContainer = () => {
         name={navigationFavoritePages.favoriteDrinks}
         component={FavoriteDrinksScreen}
         options={{
-          // tabBarBadge: 3,
           tabBarIcon: ({color}) => {
             return <FontAwesome5 name={'mug-hot'} size={20} color={color} />;
           },

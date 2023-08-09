@@ -1,5 +1,4 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {BaseQueryResult} from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 
 import {
   IProductBriefInfo,
@@ -14,7 +13,7 @@ export const productRequest = createApi({
   reducerPath: 'productRequest',
   baseQuery: fetchBaseQuery({baseUrl: 'http://ci2.dextechnology.com:8000'}),
   endpoints: build => ({
-    getProduct: build.mutation<IProductFullInfo | null, IProductRequest>({
+    getProduct: build.mutation<IProductFullInfo, IProductRequest>({
       query: (data: IProductRequest) => ({
         url: '/api/Product/GetProduct',
         headers: {
@@ -23,14 +22,11 @@ export const productRequest = createApi({
         method: 'POST',
         body: JSON.stringify(data),
       }),
-      transformResponse: (response: BaseQueryResult<any>) => {
+      transformResponse: (response: IProductFullInfo) => {
         return replaceLinksForProductScreen(response);
       },
     }),
-    getProductsCafe: build.mutation<
-      IProductBriefInfo[] | undefined,
-      ICafeRequest
-    >({
+    getProductsCafe: build.mutation<IProductBriefInfo[], ICafeRequest>({
       query: (cafe: ICafeRequest) => ({
         url: '/api/Product/GetProductsCafe',
         headers: {
@@ -39,7 +35,7 @@ export const productRequest = createApi({
         method: 'POST',
         body: JSON.stringify(cafe),
       }),
-      transformResponse: (response: BaseQueryResult<any>) => {
+      transformResponse: (response: IProductBriefInfo[]) => {
         return replaceProductsLinks(response);
       },
     }),

@@ -4,7 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {navigationStacks} from '../components/navigationStacks';
 import {HomeScreen} from '../../core/HomeScreen';
-import {CustomDrawerContent} from '../../common/components/CustomDrawerContent';
+import {CustomDrawerContent} from '../../common/components/drawerComponent/CustomDrawerContent';
 import {COLORS} from '../../../resources/colors';
 import {TabStackContainer} from './TabStackContainer';
 

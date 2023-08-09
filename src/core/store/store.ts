@@ -7,7 +7,7 @@ import {rootReducer} from './rootReducer';
 import {userRequest} from '../api/userRequest';
 import {productRequest} from '../api/productRequest';
 import {favoriteRequest} from '../api/favoriteRequest';
-import { cafeRequest } from "../api/cafeRequest";
+import {cafeRequest} from '../api/cafeRequest';
 
 const options = {
   diff: true,

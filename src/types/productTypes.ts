@@ -1,5 +1,5 @@
 export interface IProductRequest {
-  sessionId: string | null;
+  sessionId: string;
   productId: string;
 }
 
@@ -11,7 +11,7 @@ export interface IProductFullInfo {
   cofeName: string;
   favarite: boolean;
   attribute: IAttributeInfo[];
-  imagesPath?: string | undefined;
+  imagesPath: string;
 }
 
 export interface IAttributeInfo {
@@ -25,6 +25,6 @@ export interface IProductBriefInfo {
   cofeId: string;
   name: string;
   price: number;
-  favorite: boolean | null;
-  imagesPath?: string | undefined;
+  favorite: boolean;
+  imagesPath: string;
 }

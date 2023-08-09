@@ -17,6 +17,7 @@ export type Colors = {
   slateGray: string;
   transparent: string;
   glitter: string;
+  armyGreen: string;
 };
 
 export const COLORS: Colors = {
@@ -38,4 +39,5 @@ export const COLORS: Colors = {
   slateGray: '#5e5e5e',
   transparent: 'transparent',
   glitter: '#f5f5f5',
+  armyGreen: '#6dcf81',
 };

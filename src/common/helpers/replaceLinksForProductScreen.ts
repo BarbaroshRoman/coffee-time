@@ -17,21 +17,27 @@ const newLinks = [
   'https://vilkin.pro/wp-content/uploads/2019/03/kofe-glyasse-770x513.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/c/c6/Latte_art_3.jpg',
 ];
+
+const oldToNewLink: Record<string, string> = {
+  [oldLinks[0]]: newLinks[0],
+  [oldLinks[1]]: newLinks[1],
+  [oldLinks[2]]: newLinks[2],
+  [oldLinks[3]]: newLinks[3],
+  [oldLinks[4]]: newLinks[4],
+  [oldLinks[5]]: newLinks[5],
+};
+
 export const replaceLinksForProductScreen = (
-  product: IProductFullInfo | null,
-) => {
-  if (product?.imagesPath === oldLinks[0]) {
-    product.imagesPath = newLinks[0];
-  } else if (product?.imagesPath === oldLinks[1]) {
-    product.imagesPath = newLinks[1];
-  } else if (product?.imagesPath === oldLinks[2]) {
-    product.imagesPath = newLinks[2];
-  } else if (product?.imagesPath === oldLinks[3]) {
-    product.imagesPath = newLinks[3];
-  } else if (product?.imagesPath === oldLinks[4]) {
-    product.imagesPath = newLinks[4];
-  } else if (product?.imagesPath === oldLinks[5]) {
-    product.imagesPath = newLinks[5];
+  product: IProductFullInfo,
+): IProductFullInfo => {
+  const newProduct: IProductFullInfo = {...product};
+
+  if (
+    newProduct.imagesPath !== undefined &&
+    oldToNewLink[newProduct.imagesPath]
+  ) {
+    newProduct.imagesPath = oldToNewLink[newProduct.imagesPath];
   }
-  return product;
+
+  return newProduct;
 };

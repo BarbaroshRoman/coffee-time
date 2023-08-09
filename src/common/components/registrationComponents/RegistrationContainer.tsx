@@ -12,7 +12,7 @@ import {
 import {UserData} from './child/UserData';
 
 type Props = {
-  fadeAnim: any;
+  fadeAnim: Animated.Value;
   choiceToEnter: string;
   setChoiceToEnter: React.Dispatch<React.SetStateAction<string>>;
   email: string;
@@ -58,6 +58,27 @@ export const RegistrationContainer = (props: Props) => {
     isVisible,
     setIsVisible,
   } = props;
+
+  const styles = StyleSheet.create({
+    buttonsContainer: {
+      marginTop: '16%',
+    },
+    animatedView: {
+      opacity: fadeAnim,
+    },
+    registrationButton: {
+      backgroundColor: COLORS.darkBlue,
+      paddingVertical: 14,
+      marginHorizontal: '10%',
+      marginTop: 44,
+      borderRadius: 40,
+    },
+    buttonsText: {
+      fontSize: 16,
+      color: COLORS.white,
+      textAlign: 'center',
+    },
+  });
 
   switch (choiceToEnter) {
     case AUTHORIZATION:
@@ -108,7 +129,7 @@ export const RegistrationContainer = (props: Props) => {
     default:
       return (
         <View style={styles.buttonsContainer}>
-          <Animated.View style={{opacity: fadeAnim}}>
+          <Animated.View style={styles.animatedView}>
             <TouchableOpacity
               style={styles.registrationButton}
               onPress={() => setChoiceToEnter(AUTHORIZATION)}>
@@ -124,21 +145,3 @@ export const RegistrationContainer = (props: Props) => {
       );
   }
 };
-
-const styles = StyleSheet.create({
-  buttonsContainer: {
-    marginTop: '16%',
-  },
-  registrationButton: {
-    backgroundColor: COLORS.darkBlue,
-    paddingVertical: 14,
-    marginHorizontal: '10%',
-    marginTop: 44,
-    borderRadius: 40,
-  },
-  buttonsText: {
-    fontSize: 16,
-    color: COLORS.white,
-    textAlign: 'center',
-  },
-});

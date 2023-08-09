@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
-  Dimensions,
   ImageBackground,
   ScrollView,
   StyleSheet,
@@ -15,8 +14,8 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import {COLORS} from '../../resources/colors';
-import {RegistrationTitle} from '../common/components/RegistrationTitle';
-import {RegistrationContainer} from '../common/components/registrationContainer/RegistrationContainer';
+import {RegistrationTitle} from '../common/components/registrationComponents/RegistrationTitle';
+import {RegistrationContainer} from '../common/components/registrationComponents/RegistrationContainer';
 import {
   loadingUser,
   registrationUser,
@@ -100,7 +99,7 @@ export const RegistrationScreen: React.FC = () => {
     }
   }, [password]);
 
-  const registrationErrorHandler = (): boolean | undefined => {
+  const registrationErrorHandler = useCallback((): boolean | void => {
     const mailError = registrationMailHandler();
     const passwordError = registrationPasswordHandler();
 
@@ -114,9 +113,14 @@ export const RegistrationScreen: React.FC = () => {
       setErrorMessage('');
       return true;
     }
-  };
+  }, [
+    password,
+    passwordConfirmation,
+    registrationMailHandler,
+    registrationPasswordHandler,
+  ]);
 
-  const authorizationErrorHandler = (): boolean | undefined => {
+  const authorizationErrorHandler = useCallback((): boolean | void => {
     const mailError = registrationMailHandler();
     const passwordError = registrationPasswordHandler();
 
@@ -128,7 +132,7 @@ export const RegistrationScreen: React.FC = () => {
       setErrorMessage('');
       return true;
     }
-  };
+  }, [registrationMailHandler, registrationPasswordHandler]);
 
   const backMainMenu = (): void => {
     setChoiceToEnter(MAIN_MENU);
@@ -170,7 +174,13 @@ export const RegistrationScreen: React.FC = () => {
           setUsername('');
         });
     }
-  }, [dispatch, email, password, passwordConfirmation, registrationRequest]);
+  }, [
+    dispatch,
+    email,
+    password,
+    registrationErrorHandler,
+    registrationRequest,
+  ]);
 
   const additionalRegistration = useCallback((): void => {
     if (username) {
@@ -217,7 +227,14 @@ export const RegistrationScreen: React.FC = () => {
           showError('Неверно введен email и/или пароль');
         });
     }
-  }, [authorizationRequest, dispatch, email, navigation, password]);
+  }, [
+    authorizationErrorHandler,
+    authorizationRequest,
+    dispatch,
+    email,
+    navigation,
+    password,
+  ]);
 
   const showError = (errorMes: string): void => {
     Alert.alert('Ошибка', errorMes, [

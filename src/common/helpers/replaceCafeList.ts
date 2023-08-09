@@ -13,10 +13,8 @@ export interface INewCafeInfo extends ICafeInfo {
   favorite: boolean;
 }
 
-export const replaceCafeList = (
-  allCafe: ICafeInfo[] | null,
-): INewCafeInfo[] | undefined => {
-  return allCafe?.map(el => {
+export const replaceCafeList = (allCafe: ICafeInfo[]): INewCafeInfo[] => {
+  return allCafe.map(el => {
     const newCafe: INewCafeInfo = {...el, favorite: false};
 
     if (newCafe.images === oldLinks[0]) {

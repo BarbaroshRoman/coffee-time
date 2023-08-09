@@ -8,16 +8,15 @@ import {
   Text,
   View,
 } from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
 
 import {COLORS} from '../../resources/colors';
 import {useTypedSelector} from '../hooks/useTypedSelector';
 import {ProductsListView} from '../common/components/ProductsListView';
-import {DetailsContainer} from '../common/components/DetailsContainer';
+import {DetailsContainer} from '../common/components/cafeDetailsComponent/DetailsContainer';
 import {HeaderComponent} from '../common/components/HeaderComponent';
-import {navigationHomePages} from '../navigation/components/navigationHomePages';
 import {
   addCafe,
   addDrink,
@@ -33,26 +32,17 @@ import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
 export const CafeDetailsScreen: React.FC = () => {
   const image = require('../../resources/images/image_no_coffe.png');
   const route = useRoute<RouteProp<Record<string, INewCafeInfo>, string>>();
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const sessionId = useTypedSelector(state => state.user.sessionId);
   const favoriteDrinks = useTypedSelector(state => state.favorites.drinks);
-  const cafeList = useTypedSelector(state => state.favorites.cafe);
+  const favoritesCafeList = useTypedSelector(state => state.favorites.cafe);
   const [getProductsCafe] = useGetProductsCafeMutation();
   const [setFavorite] = useSetMutation();
   const [unsetFavorite] = useUnsetMutation();
 
   const [productsList, setProductsList] = useState<IProductBriefInfo[]>([]);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const targetCafe = cafeList.find(el => el.id === route.params.id);
-
-  useEffect(() => {
-    getAllProduct();
-  }, []);
-
-  const goBackHandler = useCallback((): void => {
-    navigation.goBack();
-  }, [navigation]);
+  const targetCafe = favoritesCafeList.find(el => el.id === route.params.id);
 
   const getAllProduct = useCallback(async (): Promise<void> => {
     const cafe: ICafeRequest = {
@@ -62,7 +52,7 @@ export const CafeDetailsScreen: React.FC = () => {
     await getProductsCafe(cafe)
       .unwrap()
       .then(response => {
-        setProductsList(response ?? []);
+        setProductsList(response);
       })
       .catch(() => {
         setErrorMessages([
@@ -71,6 +61,10 @@ export const CafeDetailsScreen: React.FC = () => {
         ]);
       });
   }, [getProductsCafe, route.params.id, sessionId]);
+
+  useEffect(() => {
+    getAllProduct();
+  }, [getAllProduct]);
 
   const setFavoriteHelper = useCallback(
     async (
@@ -91,7 +85,7 @@ export const CafeDetailsScreen: React.FC = () => {
           getAllProduct();
         });
     },
-    [dispatch, setFavorite],
+    [dispatch, getAllProduct, setFavorite],
   );
 
   const unsetFavoriteHelper = useCallback(
@@ -111,7 +105,7 @@ export const CafeDetailsScreen: React.FC = () => {
           getAllProduct();
         });
     },
-    [dispatch, unsetFavorite],
+    [dispatch, getAllProduct, unsetFavorite],
   );
 
   const setAndUnsetFavoriteProduct = useCallback(
@@ -126,7 +120,7 @@ export const CafeDetailsScreen: React.FC = () => {
         await unsetFavoriteHelper(product, item);
       }
     },
-    [sessionId],
+    [sessionId, setFavoriteHelper, unsetFavoriteHelper],
   );
 
   const showError = (errorMes: string): void => {
@@ -136,16 +130,6 @@ export const CafeDetailsScreen: React.FC = () => {
       },
     ]);
   };
-
-  const goToProduct = useCallback(
-    (item: IProductBriefInfo): void => {
-      navigation.navigate(
-        navigationHomePages.productDetails as never,
-        item as never,
-      );
-    },
-    [navigation],
-  );
 
   const addCafeToFavorites = useCallback((): void => {
     if (targetCafe?.favorite) {
@@ -159,7 +143,6 @@ export const CafeDetailsScreen: React.FC = () => {
     return (
       <ProductsListView
         item={item}
-        goToProduct={goToProduct}
         setAndUnsetFavoriteProduct={setAndUnsetFavoriteProduct}
         favoriteDrinks={favoriteDrinks}
         getAllProduct={getAllProduct}
@@ -170,7 +153,7 @@ export const CafeDetailsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <HeaderComponent isGoBack={true} goBackHandler={goBackHandler} />
+      <HeaderComponent isGoBack={true} />
       {productsList.length ? (
         <>
           <View style={styles.imageBackgroundContainer}>

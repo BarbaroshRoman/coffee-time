@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {COLORS} from '../../../resources/colors';
+import {COLORS} from '../../../../resources/colors';
 
 type Props = {
   productName: string;
@@ -12,20 +12,19 @@ type Props = {
 export const ProductNameContainer = (props: Props) => {
   const {favarite, setAndUnsetFavoriteProduct, productName} = props;
 
+  const changeFavoritesProduct = useCallback(() => {
+    favarite
+      ? setAndUnsetFavoriteProduct('unset')
+      : setAndUnsetFavoriteProduct('set');
+  }, [favarite, setAndUnsetFavoriteProduct]);
+
+  const iconName = useMemo(() => (favarite ? 'heart' : 'hearto'), [favarite]);
+
   return (
     <View style={styles.productNameContainer}>
       <Text style={styles.productName}>{productName}</Text>
-      <TouchableOpacity
-        onPress={() => {
-          favarite
-            ? setAndUnsetFavoriteProduct('unset')
-            : setAndUnsetFavoriteProduct('set');
-        }}>
-        <AntDesign
-          name={favarite ? 'heart' : 'hearto'}
-          color={COLORS.red}
-          size={20}
-        />
+      <TouchableOpacity onPress={changeFavoritesProduct}>
+        <AntDesign name={iconName} color={COLORS.red} size={20} />
       </TouchableOpacity>
     </View>
   );

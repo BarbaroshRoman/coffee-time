@@ -1,17 +1,18 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {COLORS} from '../../../resources/colors';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+
+import {COLORS} from '../../../../resources/colors';
 
 type Props = {
   price: number;
-  popIn: () => any;
+  popUpWindow: () => void;
 };
 export const OrderCoffeeContainer = (props: Props) => {
-  const {popIn, price} = props;
+  const {popUpWindow, price} = props;
   return (
     <View style={styles.orderCoffeeContainer}>
       <Text style={styles.priceText}>{price} ₽</Text>
-      <TouchableOpacity style={styles.orderCoffeeButton} onPress={popIn}>
+      <TouchableOpacity style={styles.orderCoffeeButton} onPress={popUpWindow}>
         <Text style={styles.orderCoffeeText}>Заказать</Text>
       </TouchableOpacity>
     </View>

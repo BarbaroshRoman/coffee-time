@@ -1,16 +1,25 @@
 import React, {ReactElement} from 'react';
 import {StyleSheet} from 'react-native';
 import YaMap, {Marker} from 'react-native-yamap';
+import {useNavigation} from '@react-navigation/native';
+import {DrawerContentComponentProps} from '@react-navigation/drawer';
 
-import {INewCafeInfo} from '../helpers/replaceCafeList';
+import {INewCafeInfo} from '../../helpers/replaceCafeList';
+import {navigationHomePages} from '../../../navigation/components/navigationHomePages';
 
 type Props = {
   renderCafeOnMap: (cafeName: string) => ReactElement<any, string>;
-  goToCafe: (item: INewCafeInfo) => void;
   cafeList: INewCafeInfo[];
 };
 export const MapComponent = (props: Props) => {
-  const {renderCafeOnMap, cafeList, goToCafe} = props;
+  const navigation =
+    useNavigation() as DrawerContentComponentProps['navigation'];
+  const {renderCafeOnMap, cafeList} = props;
+
+  const goToCafe = (item: INewCafeInfo): void => {
+    navigation.navigate(navigationHomePages.cafeDetails, item);
+  };
+
   return (
     <YaMap
       userLocationIcon={{

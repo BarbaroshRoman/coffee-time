@@ -1,5 +1,4 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {BaseQueryResult} from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 
 import {
   INewCafeInfo,
@@ -10,8 +9,8 @@ export const cafeRequest = createApi({
   reducerPath: 'cafeRequest',
   baseQuery: fetchBaseQuery({baseUrl: 'http://ci2.dextechnology.com:8000'}),
   endpoints: build => ({
-    getAllCafe: build.mutation<INewCafeInfo[] | undefined, string | null>({
-      query: (sessionId: string | null) => ({
+    getAllCafe: build.mutation<INewCafeInfo[], string>({
+      query: (sessionId: string) => ({
         url: '/api/Cafe/GetAll',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -19,7 +18,7 @@ export const cafeRequest = createApi({
         method: 'POST',
         body: JSON.stringify(sessionId),
       }),
-      transformResponse: (response: BaseQueryResult<any>) => {
+      transformResponse: (response: INewCafeInfo[]) => {
         return replaceCafeList(response);
       },
     }),

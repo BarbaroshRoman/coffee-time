@@ -10,7 +10,7 @@ import Spinner from 'react-native-spinkit';
 
 import {COLORS} from '../../../../../resources/colors';
 import {IVisiblePassword} from '../../../../core/RegistrationScreen';
-import {PasswordInput} from '../../PasswordInput';
+import {PasswordInput} from './PasswordInput';
 
 type Props = {
   isRegistration?: boolean;

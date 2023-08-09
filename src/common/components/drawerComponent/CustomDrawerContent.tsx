@@ -14,10 +14,10 @@ import {
 } from '@react-navigation/drawer';
 import {useDispatch} from 'react-redux';
 
-import {useTypedSelector} from '../../hooks/useTypedSelector';
-import {COLORS} from '../../../resources/colors';
-import {navigationStacks} from '../../navigation/components/navigationStacks';
-import {loadingUser, userLogout} from '../../modules/redux/user/userReducer';
+import {useTypedSelector} from '../../../hooks/useTypedSelector';
+import {COLORS} from '../../../../resources/colors';
+import {navigationStacks} from '../../../navigation/components/navigationStacks';
+import {loadingUser, userLogout} from '../../../modules/redux/user/userReducer';
 
 export const CustomDrawerContent: React.FC<
   DrawerContentComponentProps

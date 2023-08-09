@@ -1,42 +1,23 @@
 import React from 'react';
-import {DrawerContentComponentProps} from '@react-navigation/drawer';
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 
 import {COLORS} from '../../resources/colors';
 import {HeaderComponent} from '../common/components/HeaderComponent';
 import {useTypedSelector} from '../hooks/useTypedSelector';
-import {navigationHomePages} from '../navigation/components/navigationHomePages';
 import {INewCafeInfo} from '../common/helpers/replaceCafeList';
 import {CafeListView} from '../common/components/CafeListView';
 
-interface IFavoriteCafeScreenProps {
-  navigation: DrawerContentComponentProps['navigation'];
-}
-
-export const FavoriteCafeScreen: React.FC<IFavoriteCafeScreenProps> = ({
-  navigation,
-}) => {
+export const FavoriteCafeScreen: React.FC = () => {
   const image = require('../../resources/images/image_no_coffe.png');
   const cafeList = useTypedSelector(state => state.favorites.cafe);
 
-  const openDrawer = (): void => {
-    navigation.openDrawer();
-  };
-
-  const goToCafe = (item: INewCafeInfo): void => {
-    navigation.navigate(
-      navigationHomePages.cafeDetails as never,
-      item as never,
-    );
-  };
-
   const renderCafeList = ({item}: {item: INewCafeInfo}) => {
-    return <CafeListView item={item} goToCafe={goToCafe} />;
+    return <CafeListView item={item} />;
   };
 
   return (
     <View style={styles.container}>
-      <HeaderComponent isGoBack={false} openDrawer={openDrawer} />
+      <HeaderComponent />
       {cafeList.length ? (
         <View style={styles.indentForMapLabel}>
           <FlatList

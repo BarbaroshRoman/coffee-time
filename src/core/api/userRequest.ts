@@ -6,7 +6,7 @@ export const userRequest = createApi({
   reducerPath: 'userRequest',
   baseQuery: fetchBaseQuery({baseUrl: 'http://ci2.dextechnology.com:8000'}),
   endpoints: build => ({
-    register: build.mutation<string | null, IUserRequest>({
+    register: build.mutation<string, IUserRequest>({
       query: (data: IUserRequest) => ({
         url: '/api/User/Register',
         headers: {
@@ -16,7 +16,7 @@ export const userRequest = createApi({
         body: JSON.stringify(data),
       }),
     }),
-    authorization: build.mutation<string | null, IUserRequest>({
+    authorization: build.mutation<string, IUserRequest>({
       query: (data: IUserRequest) => ({
         url: '/api/User/Authorization',
         headers: {

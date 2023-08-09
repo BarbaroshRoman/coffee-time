@@ -14,5 +14,5 @@ export interface IAddCafeAction {
 }
 
 export interface IRemoveCafeAction {
-  payload: string | undefined;
+  payload: string;
 }

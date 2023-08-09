@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import {COLORS} from '../../../resources/colors';
-import {IVisiblePassword} from '../../core/RegistrationScreen';
+import {COLORS} from '../../../../../resources/colors';
+import {IVisiblePassword} from '../../../../core/RegistrationScreen';
 
 type Props = {
   password: string | undefined;
@@ -22,6 +22,38 @@ export const PasswordInput = (props: Props) => {
     placeholder,
     isRegistration,
   } = props;
+
+  const hiddenPassword = useMemo(
+    (): boolean =>
+      isRegistration ? isVisible.passwordConfirmation : isVisible.password,
+    [isRegistration, isVisible.password, isVisible.passwordConfirmation],
+  );
+
+  const changePasswordVisibility = useCallback(() => {
+    isRegistration
+      ? setIsVisible({
+          ...isVisible,
+          passwordConfirmation: !isVisible.passwordConfirmation,
+        })
+      : setIsVisible({...isVisible, password: !isVisible.password});
+  }, [isRegistration, isVisible, setIsVisible]);
+
+  const iconName = useMemo(
+    () =>
+      isVisible[isRegistration ? 'passwordConfirmation' : 'password']
+        ? 'eye'
+        : 'eye-slash',
+    [isRegistration, isVisible],
+  );
+
+  const iconColor = useMemo(
+    () =>
+      isVisible[isRegistration ? 'passwordConfirmation' : 'password']
+        ? COLORS.ghostWhite
+        : COLORS.dimGray,
+    [isRegistration, isVisible],
+  );
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -29,39 +61,17 @@ export const PasswordInput = (props: Props) => {
         onChangeText={setPassword}
         value={password}
         placeholder={placeholder}
-        secureTextEntry={
-          isRegistration ? isVisible.passwordConfirmation : isVisible.password
-        }
+        secureTextEntry={hiddenPassword}
       />
       <TouchableOpacity
         style={styles.visibilityIconButton}
-        onPress={() =>
-          isRegistration
-            ? setIsVisible({
-                ...isVisible,
-                passwordConfirmation: !isVisible.passwordConfirmation,
-              })
-            : setIsVisible({...isVisible, password: !isVisible.password})
-        }>
-        {isRegistration ? (
-          <FontAwesome5
-            name={isVisible.passwordConfirmation ? 'eye' : 'eye-slash'}
-            style={styles.icon}
-            size={16}
-            color={
-              isVisible.passwordConfirmation
-                ? COLORS.ghostWhite
-                : COLORS.dimGray
-            }
-          />
-        ) : (
-          <FontAwesome5
-            name={isVisible.password ? 'eye' : 'eye-slash'}
-            style={styles.icon}
-            size={16}
-            color={isVisible.password ? COLORS.ghostWhite : COLORS.dimGray}
-          />
-        )}
+        onPress={changePasswordVisibility}>
+        <FontAwesome5
+          name={iconName}
+          style={styles.icon}
+          size={16}
+          color={iconColor}
+        />
       </TouchableOpacity>
     </View>
   );

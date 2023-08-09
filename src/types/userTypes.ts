@@ -1,5 +1,5 @@
 export interface IUserSuccessPayload {
-  sessionId: string | null;
+  sessionId: string;
   email: string;
   password: string;
   isLogined: boolean;
@@ -19,6 +19,6 @@ export interface IUserDataAction {
 }
 
 export interface IUserRequest {
-  email?: string | undefined;
+  email: string;
   password: string;
 }

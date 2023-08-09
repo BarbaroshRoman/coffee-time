@@ -1,16 +1,24 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useNavigation} from '@react-navigation/native';
+import {DrawerContentComponentProps} from '@react-navigation/drawer';
 
 import {COLORS} from '../../../resources/colors';
 import {INewCafeInfo} from '../helpers/replaceCafeList';
+import {navigationHomePages} from '../../navigation/components/navigationHomePages';
 
 type Props = {
   item: INewCafeInfo;
-  goToCafe: (item: INewCafeInfo) => void;
 };
 export const CafeListView = (props: Props) => {
-  const {item, goToCafe} = props;
+  const navigation =
+    useNavigation() as DrawerContentComponentProps['navigation'];
+  const item = props.item;
+  const goToCafe = (cafe: INewCafeInfo): void => {
+    navigation.navigate(navigationHomePages.cafeDetails, cafe);
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={() => goToCafe(item)}>
       <Image source={{uri: item.images}} style={styles.imageNoCoffee} />

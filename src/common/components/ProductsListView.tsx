@@ -1,13 +1,15 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useNavigation} from '@react-navigation/native';
+import {DrawerContentComponentProps} from '@react-navigation/drawer';
 
 import {COLORS} from '../../../resources/colors';
 import {IProductBriefInfo} from '../../types/productTypes';
+import {navigationHomePages} from '../../navigation/components/navigationHomePages';
 
 type Props = {
   item: IProductBriefInfo;
-  goToProduct: (item: IProductBriefInfo) => void;
   isCafeDetailsScreen?: boolean;
   setAndUnsetFavoriteProduct?: (
     item: IProductBriefInfo,
@@ -17,10 +19,11 @@ type Props = {
   getAllProduct?: () => Promise<void>;
   favoriteDrinks?: IProductBriefInfo[];
 };
-export const ProductsListView = (props: Props) => {
+export const ProductsListView: React.FC<Props> = props => {
+  const navigation =
+    useNavigation() as DrawerContentComponentProps['navigation'];
   const {
     item,
-    goToProduct,
     setAndUnsetFavoriteProduct,
     unsetFavoriteProduct,
     getAllProduct,
@@ -35,7 +38,40 @@ export const ProductsListView = (props: Props) => {
         getAllProduct?.();
       }
     }
-  }, [favoriteDrinks, isCafeDetailsScreen, item.favorite, item.id]);
+  }, [
+    favoriteDrinks,
+    getAllProduct,
+    isCafeDetailsScreen,
+    item.favorite,
+    item.id,
+  ]);
+
+  const goToProduct = useCallback(
+    (product: IProductBriefInfo): void => {
+      navigation.navigate(navigationHomePages.productDetails, product);
+    },
+    [navigation],
+  );
+
+  const changeFavoritesProduct = useCallback(() => {
+    if (setAndUnsetFavoriteProduct) {
+      item.favorite
+        ? setAndUnsetFavoriteProduct(item, 'unset')
+        : setAndUnsetFavoriteProduct(item, 'set');
+    } else if (unsetFavoriteProduct) {
+      unsetFavoriteProduct(item);
+    }
+  }, [item, setAndUnsetFavoriteProduct, unsetFavoriteProduct]);
+
+  const favoritesIcon = useMemo(
+    () => (item.favorite ? 'heart' : 'hearto'),
+    [item.favorite],
+  );
+
+  const favoritesIconColor = useMemo(
+    () => (item.favorite ? COLORS.red : COLORS.ghostWhite),
+    [item.favorite],
+  );
 
   return (
     <TouchableOpacity
@@ -45,19 +81,10 @@ export const ProductsListView = (props: Props) => {
       <Image source={{uri: item.imagesPath}} style={styles.imageNoCoffee} />
       <View style={styles.iconBox}>
         <Text style={styles.price}>{item.price} ₽</Text>
-        <TouchableOpacity
-          onPress={() => {
-            if (setAndUnsetFavoriteProduct) {
-              item.favorite
-                ? setAndUnsetFavoriteProduct(item, 'unset')
-                : setAndUnsetFavoriteProduct(item, 'set');
-            } else if (unsetFavoriteProduct) {
-              unsetFavoriteProduct(item);
-            }
-          }}>
+        <TouchableOpacity onPress={changeFavoritesProduct}>
           <AntDesign
-            name={item.favorite ? 'heart' : 'hearto'}
-            color={item.favorite ? COLORS.red : COLORS.ghostWhite}
+            name={favoritesIcon}
+            color={favoritesIconColor}
             size={20}
           />
         </TouchableOpacity>

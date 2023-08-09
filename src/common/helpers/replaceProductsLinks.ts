@@ -9,23 +9,25 @@ const newLinks = [
   'https://upload.wikimedia.org/wikipedia/commons/c/c6/Latte_art_3.jpg',
 ];
 
+const oldToNewLink: Record<string, string> = {
+  ['Капучино']: newLinks[0],
+  ['Эгг-ног']: newLinks[1],
+  ['Айриш кофе «The Original»']: newLinks[2],
+  ['Pour over']: newLinks[3],
+  ['Кофе "Глясе"']: newLinks[4],
+  ['Латте со вкусом карамель-орех']: newLinks[5],
+};
+
 export const replaceProductsLinks = (
-  allProduct: IProductBriefInfo[] | null,
-): IProductBriefInfo[] | undefined => {
-  return allProduct?.map(el => {
-    if (el.name === 'Капучино') {
-      el.imagesPath = newLinks[0];
-    } else if (el.name === 'Эгг-ног') {
-      el.imagesPath = newLinks[1];
-    } else if (el.name === 'Айриш кофе «The Original»') {
-      el.imagesPath = newLinks[2];
-    } else if (el.name === 'Pour over') {
-      el.imagesPath = newLinks[3];
-    } else if (el.name === 'Кофе "Глясе"') {
-      el.imagesPath = newLinks[4];
-    } else if (el.name === 'Латте со вкусом карамель-орех') {
-      el.imagesPath = newLinks[5];
+  allProduct: IProductBriefInfo[],
+): IProductBriefInfo[] => {
+  return allProduct.map(el => {
+    const newEl = {...el};
+
+    if (oldToNewLink[newEl.name]) {
+      newEl.imagesPath = oldToNewLink[newEl.name];
     }
-    return el;
+
+    return newEl;
   });
 };

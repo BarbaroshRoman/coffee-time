@@ -8,15 +8,15 @@ import {
   Text,
   View,
 } from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 
 import {HeaderComponent} from '../common/components/HeaderComponent';
 import {COLORS} from '../../resources/colors';
-import {PopUpNotification} from '../common/components/PopUpNotification';
-import {ProductNameContainer} from '../common/components/ProductNameContainer';
-import {CoffeeDetailsContainer} from '../common/components/CoffeeDetailsContainer';
-import {OrderCoffeeContainer} from '../common/components/OrderCoffeeContainer';
+import {PopUpNotification} from '../common/components/productDetailsComponents/PopUpNotification';
+import {ProductNameContainer} from '../common/components/productDetailsComponents/ProductNameContainer';
+import {CoffeeDetailsContainer} from '../common/components/productDetailsComponents/CoffeeDetailsContainer';
+import {OrderCoffeeContainer} from '../common/components/productDetailsComponents/OrderCoffeeContainer';
 import {
   addDrink,
   removeDrink,
@@ -33,7 +33,6 @@ import {useSetMutation, useUnsetMutation} from './api/favoriteRequest';
 export const ProductDetailsScreen: React.FC = () => {
   const route =
     useRoute<RouteProp<Record<string, IProductBriefInfo>, string>>();
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const sessionId = useTypedSelector(state => state.user.sessionId);
   const windowHeight = Dimensions.get('window').height;
@@ -50,13 +49,10 @@ export const ProductDetailsScreen: React.FC = () => {
   const [setFavorite] = useSetMutation();
   const [unsetFavorite] = useUnsetMutation();
   const [productInfo, setProductInfo] = useState<IProductFullInfo | {}>({});
+  const [error, setError] = useState('');
 
   const {productName, price, attribute, imagesPath, favarite} =
     productInfo as IProductFullInfo;
-
-  useEffect(() => {
-    getProduct();
-  }, []);
 
   const getProduct = useCallback(async (): Promise<void> => {
     const item: IProductRequest = {
@@ -66,13 +62,16 @@ export const ProductDetailsScreen: React.FC = () => {
     await productRequest(item)
       .unwrap()
       .then(response => {
-        setProductInfo(response ?? {});
+        setProductInfo(response);
+      })
+      .catch(() => {
+        setError('Не удалось получить данные');
       });
   }, [productRequest, route.params.id, sessionId]);
 
-  const goBackHandler = useCallback((): void => {
-    navigation.goBack();
-  }, [navigation]);
+  useEffect(() => {
+    getProduct();
+  }, [getProduct]);
 
   const setFavoriteHelper = useCallback(
     async (product: IProductRequest): Promise<void> => {
@@ -90,7 +89,7 @@ export const ProductDetailsScreen: React.FC = () => {
           getProduct();
         });
     },
-    [dispatch, route.params, setFavorite],
+    [dispatch, getProduct, route.params, setFavorite],
   );
 
   const unsetFavoriteHelper = useCallback(
@@ -107,7 +106,7 @@ export const ProductDetailsScreen: React.FC = () => {
           getProduct();
         });
     },
-    [dispatch, route.params.id, unsetFavorite],
+    [dispatch, getProduct, route.params.id, unsetFavorite],
   );
 
   const setAndUnsetFavoriteProduct = useCallback(
@@ -122,10 +121,10 @@ export const ProductDetailsScreen: React.FC = () => {
         await unsetFavoriteHelper(product);
       }
     },
-    [route.params.id, sessionId],
+    [route.params.id, sessionId, setFavoriteHelper, unsetFavoriteHelper],
   );
 
-  const popIn = (): any => {
+  const popUpWindow = (): void => {
     Animated.timing(popAnim, {
       toValue: -320,
       duration: 300,
@@ -153,7 +152,7 @@ export const ProductDetailsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <HeaderComponent isGoBack={true} goBackHandler={goBackHandler} />
+      <HeaderComponent isGoBack={true} />
       {Object.keys(productInfo).length !== 0 ? (
         <>
           <View style={styles.shopHitLabel}>
@@ -173,12 +172,12 @@ export const ProductDetailsScreen: React.FC = () => {
             attribute={attribute}
             iconTypeToImagePath={iconTypeToImagePath}
           />
-          <OrderCoffeeContainer price={price} popIn={popIn} />
+          <OrderCoffeeContainer price={price} popUpWindow={popUpWindow} />
         </>
       ) : (
         <View style={styles.emptyListContainer}>
           <Image source={imageNoCoffee} style={styles.imageNoCoffee} />
-          <Text style={styles.errorText}>Не удалось получить данные</Text>
+          <Text style={styles.errorText}>{error}</Text>
         </View>
       )}
     </View>

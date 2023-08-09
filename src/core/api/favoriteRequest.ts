@@ -6,7 +6,7 @@ export const favoriteRequest = createApi({
   reducerPath: 'favoriteRequest',
   baseQuery: fetchBaseQuery({baseUrl: 'http://ci2.dextechnology.com:8000'}),
   endpoints: build => ({
-    set: build.mutation<boolean | null, IProductRequest>({
+    set: build.mutation<boolean, IProductRequest>({
       query: (product: IProductRequest) => ({
         url: '/api/Favorite/Set',
         headers: {
@@ -16,7 +16,7 @@ export const favoriteRequest = createApi({
         body: JSON.stringify(product),
       }),
     }),
-    unset: build.mutation<boolean | null, IProductRequest>({
+    unset: build.mutation<boolean, IProductRequest>({
       query: (product: IProductRequest) => ({
         url: '/api/Favorite/Unset',
         headers: {
