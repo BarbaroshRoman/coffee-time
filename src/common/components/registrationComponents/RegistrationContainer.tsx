@@ -59,26 +59,7 @@ export const RegistrationContainer = (props: Props) => {
     setIsVisible,
   } = props;
 
-  const styles = StyleSheet.create({
-    buttonsContainer: {
-      marginTop: '16%',
-    },
-    animatedView: {
-      opacity: fadeAnim,
-    },
-    registrationButton: {
-      backgroundColor: COLORS.darkBlue,
-      paddingVertical: 14,
-      marginHorizontal: '10%',
-      marginTop: 44,
-      borderRadius: 40,
-    },
-    buttonsText: {
-      fontSize: 16,
-      color: COLORS.white,
-      textAlign: 'center',
-    },
-  });
+  const opacity = {opacity: fadeAnim};
 
   switch (choiceToEnter) {
     case AUTHORIZATION:
@@ -129,7 +110,7 @@ export const RegistrationContainer = (props: Props) => {
     default:
       return (
         <View style={styles.buttonsContainer}>
-          <Animated.View style={styles.animatedView}>
+          <Animated.View style={opacity}>
             <TouchableOpacity
               style={styles.registrationButton}
               onPress={() => setChoiceToEnter(AUTHORIZATION)}>
@@ -145,3 +126,21 @@ export const RegistrationContainer = (props: Props) => {
       );
   }
 };
+
+const styles = StyleSheet.create({
+  buttonsContainer: {
+    marginTop: '16%',
+  },
+  registrationButton: {
+    backgroundColor: COLORS.darkBlue,
+    paddingVertical: 14,
+    marginHorizontal: '10%',
+    marginTop: 44,
+    borderRadius: 40,
+  },
+  buttonsText: {
+    fontSize: 16,
+    color: COLORS.white,
+    textAlign: 'center',
+  },
+});

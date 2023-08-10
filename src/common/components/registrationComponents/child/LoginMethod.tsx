@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -48,6 +48,11 @@ export const LoginMethod = (props: Props) => {
     setIsVisible,
   } = props;
 
+  const login = useCallback(
+    () => (isRegistration ? handleRegistrationUser : handleAuthorizationUser),
+    [handleAuthorizationUser, handleRegistrationUser, isRegistration],
+  );
+
   if (isLoading && isRegistration) {
     return (
       <View style={styles.registrationLoading}>
@@ -84,11 +89,7 @@ export const LoginMethod = (props: Props) => {
           )}
         </View>
         <Text style={styles.errorHandlerText}>{errorMessage}</Text>
-        <TouchableOpacity
-          style={styles.buttons}
-          onPress={
-            isRegistration ? handleRegistrationUser : handleAuthorizationUser
-          }>
+        <TouchableOpacity style={styles.buttons} onPress={login}>
           <Text style={styles.buttonsText}>{confirmation}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttons} onPress={backMainMenu}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {StyleSheet, Text, View, Animated} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -10,48 +10,14 @@ type Props = {
 export const PopUpNotification = (props: Props) => {
   const popAnim = props.popAnim;
 
-  const styles = StyleSheet.create({
-    toastContainer: {
-      position: 'absolute',
-      height: 60,
-      width: 350,
-      backgroundColor: COLORS.glitter,
-      justifyContent: 'center',
-      alignItems: 'center',
-      alignSelf: 'center',
-      borderRadius: 10,
-      shadowColor: COLORS.black,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-      transform: [{translateY: popAnim}],
-    },
-    toastRow: {
-      width: '90%',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-    },
-    toastText: {
-      width: '70%',
-      padding: 2,
-    },
-    headerText: {
-      fontWeight: 'bold',
-      fontSize: 15,
-    },
-    bodyText: {
-      fontSize: 12,
-    },
-  });
+  const animStyle = useMemo(
+    () => [styles.toastContainer, {transform: [{translateY: popAnim}]}],
+    [popAnim],
+  );
 
   return (
     <View>
-      <Animated.View style={styles.toastContainer}>
+      <Animated.View style={animStyle}>
         <View style={styles.toastRow}>
           <AntDesign name={'checkcircleo'} size={24} color={COLORS.armyGreen} />
           <View style={styles.toastText}>
@@ -63,3 +29,41 @@ export const PopUpNotification = (props: Props) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  toastContainer: {
+    position: 'absolute',
+    height: 60,
+    width: 350,
+    backgroundColor: COLORS.glitter,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 10,
+    shadowColor: COLORS.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  toastRow: {
+    width: '90%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  toastText: {
+    width: '70%',
+    padding: 2,
+  },
+  headerText: {
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  bodyText: {
+    fontSize: 12,
+  },
+});
